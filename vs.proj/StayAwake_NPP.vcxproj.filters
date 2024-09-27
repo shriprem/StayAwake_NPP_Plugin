@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\src\NPP\StaticDialog.cpp">
+      <Filter>_NPP Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\PluginDefinition.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\StayAwakeMain.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Dialogs\AboutDialog.cpp">
+      <Filter>Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Dialogs\StayAwakePanel.cpp">
+      <Filter>Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Utils.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Darkmode\DarkMode.cpp">
+      <Filter>Darkmode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Darkmode\NPP_Plugin_Darkmode.cpp">
+      <Filter>Darkmode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Darkmode\NppDarkMode.cpp">
+      <Filter>Darkmode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\NPP\dpiManagerV2.cpp">
+      <Filter>_NPP Framework</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\NPP\Docking.h">
+      <Filter>_NPP Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NPP\DockingDlgInterface.h">
+      <Filter>_NPP Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NPP\dockingResource.h">
+      <Filter>_NPP Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NPP\menuCmdID.h">
+      <Filter>_NPP Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NPP\Notepad_plus_msgs.h">
+      <Filter>_NPP Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NPP\PluginInterface.h">
+      <Filter>_NPP Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NPP\Scintilla.h">
+      <Filter>_NPP Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NPP\StaticDialog.h">
+      <Filter>_NPP Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NPP\Window.h">
+      <Filter>_NPP Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\PluginDefinition.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Dialogs\AboutDialog.h">
+      <Filter>Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Dialogs\StayAwakePanel.h">
+      <Filter>Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Resources\resource.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Resources\localization.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Utils.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NPP\Sci_Position.h">
+      <Filter>_NPP Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Darkmode\DarkMode.h">
+      <Filter>Darkmode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Darkmode\IatHook.h">
+      <Filter>Darkmode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Darkmode\NPP_Plugin_Darkmode.h">
+      <Filter>Darkmode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Darkmode\NppDarkMode.h">
+      <Filter>Darkmode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Resources\control_ids.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NPP\dpiManagerV2.h">
+      <Filter>_NPP Framework</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\src\Resources\StayAwakeUI.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="..\src\Resources\StayAwakePlugin.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="..\src\Resources\AboutUI.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="_NPP Framework">
+      <UniqueIdentifier>{9dcf597a-aaaa-473a-bc8f-1f8974d808a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dialogs">
+      <UniqueIdentifier>{dbea733e-689f-4748-af99-78abc50ff6e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base">
+      <UniqueIdentifier>{825cc4c9-f686-45c9-a883-afaf61df94e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{dd30c9f9-fbbb-4bac-9914-ffbff288d148}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Darkmode">
+      <UniqueIdentifier>{30cde513-fb91-46bb-948c-0884abb10335}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Bitmaps">
+      <UniqueIdentifier>{cb835a7a-1a6d-4d3c-a725-5e9bc5d14575}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Icons">
+      <UniqueIdentifier>{071469b0-9413-4d75-b1d0-c90225afa6f0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\src\Resources\goto.bmp">
+      <Filter>Resources\Bitmaps</Filter>
+    </Image>
+    <Image Include="..\src\Resources\about.bmp">
+      <Filter>Resources\Bitmaps</Filter>
+    </Image>
+    <Image Include="..\src\Resources\goto.ico">
+      <Filter>Resources\Icons</Filter>
+    </Image>
+    <Image Include="..\src\Resources\goto_dark.ico">
+      <Filter>Resources\Icons</Filter>
+    </Image>
+    <Image Include="..\src\Resources\goto_fluent.ico">
+      <Filter>Resources\Icons</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

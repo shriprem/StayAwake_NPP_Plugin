@@ -1,0 +1,25 @@
+#pragma code_page(65001)
+
+#include "resource.h"
+#include "control_ids.h"
+#include <windows.h>
+
+
+IDD_STAYAWAKE_DOCKPANEL DIALOGEX 26, 41, 211, 223
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "<Goto Line, Column>"
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+    RTEXT           "&Seconds between each toggle:",IDC_STAYAWAKE_STATIC,10,18,100,8
+    EDITTEXT        IDC_STAYAWAKE_INTERVAL,112,15,27,13,ES_NUMBER
+    PUSHBUTTON      "Set &Timer",IDC_STAYAWAKE_SET_INTERVAL,142,14,50,14
+    RTEXT           "",IDC_STAYAWAKE_LAST_TOGGLE,10,37,143,8
+    RTEXT           "",IDC_STAYAWAKE_NEXT_TOGGLE,10,52,143,8
+    PUSHBUTTON      "&Close",IDCLOSE,75,71,50,14
+    PUSHBUTTON      "...",IDC_STAYAWAKE_ABOUT_BUTTON,166,417,15,13,BS_BITMAP
+END
+
+
+// BITMAPS
+IDB_STAYAWAKE_ABOUT_BITMAP BITMAP                  "about.bmp"
+IDI_STAYAWAKE_BTN_STD ICON                         "StayAwake.ico"
