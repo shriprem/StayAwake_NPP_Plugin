@@ -1,5 +1,5 @@
 /*
- Copyright 2024 Shridhar Kumar <shriprem@gmail.com>
+ Copyright 2025 Shridhar Kumar <shriprem@gmail.com>
 
  Notepad++ GotoLineCol plugin is free software: you can redistribute it and/or modify
  it under the terms of the GNU Lesser General Public License as published by
@@ -41,7 +41,7 @@ BEGIN
          VALUE "FileDescription", "StayAwake plugin for Notepad++"
          VALUE "FileVersion", VERSION_VALUE
          VALUE "InternalName", "StayAwake_NPP.dll"
-         VALUE "LegalCopyright", "Copyright (C) 2024 by Shridhar Kumar"
+         VALUE "LegalCopyright", "Copyright (C) 2025 by Shridhar Kumar"
          VALUE "OriginalFilename", "StayAwake_NPP.dll"
          VALUE "ProductName", "StayAwake_NPP"
          VALUE "ProductVersion", VERSION_VALUE
