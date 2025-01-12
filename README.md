@@ -8,8 +8,6 @@
 ![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/shriprem/StayAwake_NPP_Plugin/CI_build.yml)
 ![GitHub issues](https://img.shields.io/github/issues/shriprem/StayAwake_NPP_Plugin)
 
-<a href='https://ko-fi.com/S6S417WICS' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi5.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
-
 [Current Version: 1.0.0.0](https://github.com/shriprem/StayAwake_NPP_Plugin/blob/main/VersionHistory.md)
 
 StayAwake is a simple plugin for Notepad++ that enables you to maintain an _Active_ status on Microsoft Teams (and perhaps other such messaging applications).
@@ -36,9 +34,9 @@ The time when the app last toggled _Scroll Lock_, and the time when it will do s
 ## Installation
 
 ### Installation
-Within Notepad++, you can install the StayAwake plugin using the Notepad++ Plugin Manager (**Plugins » Plugins Admin** menu option => **Available** tab).
+Within Notepad++, you can install the StayAwake plugin using the Notepad++ Plugin Manager (**Plugins Â» Plugins Admin** menu option => **Available** tab).
 
-After installing the StayAwake plugin, click on **Plugins » StayAwake » Show StayAwake Panel** menu option to start the utility.
+After installing the StayAwake plugin, click on **Plugins Â» StayAwake Â» Show StayAwake Panel** menu option to start the utility.
 
 
 ## See Also
