@@ -94,6 +94,8 @@ void StayAwakePanel::initPanel() {
    PathAppend(sIniFilePath, PREF_INI_FILE);
 
    nTimerSeconds = GetPrivateProfileInt(PREF_DEFAULTS, PREF_TIMER_INTERVAL, nTimerSeconds, sIniFilePath);
+   nTimerSeconds = (nTimerSeconds < MIN_PERIOD || nTimerSeconds > MAX_PERIOD) ? 240 : nTimerSeconds; // default to 4 minutes if out of range
+
    SetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL, nTimerSeconds, FALSE);
    bInitialized = true;
 
