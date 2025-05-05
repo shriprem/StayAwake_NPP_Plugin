@@ -33,7 +33,6 @@ The time when the app last toggled _Scroll Lock_, and the time when it will do s
 
 ## Installation
 
-### Installation
 Within Notepad++, you can install the StayAwake plugin using the Notepad++ Plugin Manager (**Plugins » Plugins Admin** menu option => **Available** tab).
 
 After installing the StayAwake plugin, click on **Plugins » StayAwake » Show StayAwake Panel** menu option to start the utility.
