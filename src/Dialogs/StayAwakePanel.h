@@ -11,7 +11,6 @@ public:
 
    void initPanel();
 
-   void localize();
    virtual void display(bool toShow=true);
    void refreshDarkMode();
    void setParent(HWND parent2set);

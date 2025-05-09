@@ -1,8 +1,6 @@
 #pragma once
 
 #include "PluginDefinition.h"
-#include <codecvt>
-#include <regex>
 #include <ShlObj_core.h>
 
 #define PREFS_TIP_MAX_WIDTH         400

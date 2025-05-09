@@ -83,14 +83,7 @@ void StayAwakePanel::initPanel() {
    Utils::loadBitmap(_hSelf, IDC_STAYAWAKE_ABOUT_BUTTON, IDB_STAYAWAKE_ABOUT_BITMAP);
    Utils::addTooltip(_hSelf, IDC_STAYAWAKE_ABOUT_BUTTON, L"", ABOUT_DIALOG_TITLE, TRUE);
 
-   if (_gLanguage != LANG_ENGLISH) localize();
    initTimer();
-}
-
-void StayAwakePanel::localize() {
-   /*
-   SetDlgItemText(_hSelf, IDOK, GOLINECOL_LABEL_BTN_GO);
-   */
 }
 
 void StayAwakePanel::display(bool toShow) {
