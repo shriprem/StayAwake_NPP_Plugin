@@ -28,46 +28,6 @@ wstring Utils::formatSystemTime(SYSTEMTIME& st, wstring prefix) {
    return sFormatted;
 }
 
-COLORREF Utils::intToRGB(int color) {
-   return RGB(GetRValue(color), GetGValue(color), GetBValue(color));
-}
-
-int Utils::scaleDPIX(int x) {
-   HDC hdc = GetDC(NULL);
-   if (!hdc) return 0;
-
-   int scaleX{ MulDiv(x, GetDeviceCaps(hdc, LOGPIXELSX), 96) };
-   ReleaseDC(NULL, hdc);
-   return scaleX;
-}
-
-int Utils::scaleDPIY(int y) {
-   HDC hdc = GetDC(NULL);
-   if (!hdc) return 0;
-
-   int scaleY{ MulDiv(y, GetDeviceCaps(hdc, LOGPIXELSY), 96) };
-   ReleaseDC(NULL, hdc);
-   return scaleY;
-}
-
-wstring Utils::getSpecialFolder(int folderID) {
-   TCHAR sFolderPath[MAX_PATH]{};
-   const HRESULT ret = SHGetFolderPath(NULL, folderID, NULL, SHGFP_TYPE_CURRENT, sFolderPath);
-
-   return ((ret == S_OK) ? wstring{ sFolderPath } : L"");
-}
-
-wstring Utils::getKnownFolderPath(REFKNOWNFOLDERID folderID) {
-   PWSTR path;
-
-   const HRESULT ret = SHGetKnownFolderPath(folderID, KF_FLAG_DEFAULT, NULL, &path);
-   if (ret != S_OK) return L"";
-
-   wstring sFolderPath{ path };
-   CoTaskMemFree(path);
-   return sFolderPath;
-}
-
 HWND Utils::addTooltip(HWND hDlg, int controlID, const wstring& pTitle, const wstring& pMessage, bool bBalloon) {
    if (!controlID || !hDlg || pMessage.empty())
       return FALSE;
@@ -108,16 +68,6 @@ HWND Utils::addTooltip(HWND hDlg, int controlID, const wstring& pTitle, const ws
    return hwndTip;
 }
 
-void Utils::addToolbarIcon(int menuIndex, int std, int fluent, int dark) {
-   toolbarIconsWithDarkMode tbIcon{};
-
-   tbIcon.hToolbarBmp = LoadBitmap(_gModule, MAKEINTRESOURCE(std));
-   tbIcon.hToolbarIcon = LoadIcon(_gModule, MAKEINTRESOURCE(fluent));
-   tbIcon.hToolbarIconDarkMode = LoadIcon(_gModule, MAKEINTRESOURCE(dark));
-
-   nppMessage(NPPM_ADDTOOLBARICON_FORDARKMODE, pluginMenuItems[menuIndex]._cmdID, (LPARAM)&tbIcon);
-}
-
 void Utils::checkMenuItem(int menuIndex, bool check) {
    nppMessage(NPPM_SETMENUITEMCHECK, pluginMenuItems[menuIndex]._cmdID, check);
 }
@@ -132,16 +82,6 @@ void Utils::showEditBalloonTip(HWND hEdit, LPCWSTR title, LPCWSTR text) {
 
    SendMessage(hEdit, EM_SHOWBALLOONTIP, NULL, (LPARAM)&tip);
    MessageBeep(MB_OK);
-}
-
-bool Utils::checkBaseOS(winVer os) {
-   return (nppMessage(NPPM_GETWINDOWSVERSION, NULL, NULL) >= os);
-}
-
-float Utils::getNPPVersion() {
-   long versionNum{ static_cast<long>(nppMessage(NPPM_GETNPPVERSION, 0, 0)) };
-
-   return std::stof(to_wstring(HIWORD(versionNum)) + L"." + to_wstring(LOWORD(versionNum)));
 }
 
 wstring Utils::getVersionInfo(LPCWSTR key) {
@@ -184,14 +124,4 @@ void Utils::loadBitmap(HWND hDlg, int controlID, int resource) {
       SendMessage(hwndCtrl, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hBitmap);
       DeleteObject(hBitmap);
    }
-}
-
-bool Utils::checkDirectoryExists(LPCWSTR lpDirPath) {
-   DWORD dwAttrib = ::GetFileAttributesW(lpDirPath);
-   return (dwAttrib != INVALID_FILE_ATTRIBUTES && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
-}
-
-bool Utils::checkFileExists(LPCWSTR lpFilePath) {
-   DWORD dwAttrib = ::GetFileAttributesW(lpFilePath);
-   return (dwAttrib != INVALID_FILE_ATTRIBUTES && !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 }

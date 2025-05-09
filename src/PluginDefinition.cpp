@@ -59,15 +59,6 @@ bool setCommand(size_t index, const wstring& cmdName, PFUNCPLUGINCMD pFunc, Shor
     return true;
 }
 
-HWND getCurrentScintilla() {
-   int which {-1};
-
-   nppMessage(NPPM_GETCURRENTSCINTILLA, 0, (LPARAM)&which);
-   if (which < 0) return (HWND)NULL;
-
-   return (HWND) (which ?  nppData._scintillaSecondHandle : nppData._scintillaMainHandle);
-}
-
 LRESULT nppMessage(UINT messageID, WPARAM wparam, LPARAM lparam) {
    return SendMessage(nppData._nppHandle, messageID, wparam, lparam);
 }
