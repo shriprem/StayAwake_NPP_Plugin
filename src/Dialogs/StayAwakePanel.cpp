@@ -49,28 +49,6 @@ INT_PTR CALLBACK StayAwakePanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM
       SetFocus(_hSelf);
       break;
 
-   case WM_INITDIALOG:
-      NPPDM_AutoSubclassAndThemeChildControls(_hSelf);
-      break;
-
-   case WM_CTLCOLORDLG:
-   case WM_CTLCOLORLISTBOX:
-   case WM_CTLCOLORSTATIC:
-      if (NPPDM_IsEnabled()) {
-         return NPPDM_OnCtlColorDarker(reinterpret_cast<HDC>(wParam));
-      }
-      break;
-
-   case WM_CTLCOLOREDIT:
-      if (NPPDM_IsEnabled()) {
-         return NPPDM_OnCtlColorSofter(reinterpret_cast<HDC>(wParam));
-      }
-      break;
-
-   case WM_PRINTCLIENT:
-      if (NPPDM_IsEnabled()) return TRUE;
-      break;
-
    case WM_SETFOCUS:
       break;
 
@@ -128,7 +106,6 @@ void StayAwakePanel::display(bool toShow) {
 }
 
 void StayAwakePanel::refreshDarkMode() {
-   NPPDM_AutoThemeChildControls(_hSelf);
    redraw();
 
    if (_aboutDlg.isCreated())

@@ -36,8 +36,6 @@ void pluginInit(HANDLE hModule) {
 void pluginCleanUp(){}
 
 void commandMenuInit() {
-   NPPDM_InitDarkMode(nppData._nppHandle);
-
    setCommand(MI_GOTO_PANEL, MENU_SHOW_PANEL, ToggleStayAwakePanel, NULL, _awakePanel.isVisible());
    setCommand(MI_ABOUT_DIALOG, MENU_ABOUT, ShowAboutDialog);
 }
@@ -87,7 +85,7 @@ void ShowStayAwakePanel(bool show) {
       if (!_awakePanel.isCreated()) {
          _awakePanel.create(&data);
 
-         data.uMask = DWS_DF_CONT_RIGHT | DWS_ICONTAB | DWS_USEOWNDARKMODE;
+         data.uMask = DWS_DF_CONT_RIGHT | DWS_ICONTAB;
          data.pszModuleName = _awakePanel.getPluginFileName();
          data.dlgID = MI_GOTO_PANEL;
          data.pszName = MENU_PANEL_NAME;

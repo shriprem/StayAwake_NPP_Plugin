@@ -14,7 +14,6 @@
 
 #include "PluginDefinition.h"
 #include "Dialogs/StayAwakePanel.h"
-#include "Darkmode/NPP_Plugin_Darkmode.h"
 
 extern FuncItem pluginMenuItems[MI_COUNT];
 extern NppData nppData;
@@ -63,7 +62,6 @@ extern "C" __declspec(dllexport) FuncItem * getFuncsArray(int *nbF)
 extern "C" __declspec(dllexport) void beNotified(SCNotification *notifyCode) {
    switch (notifyCode->nmhdr.code) {
       case NPPN_DARKMODECHANGED:
-         NPPDM_QueryNPPDarkmode();
          refreshDarkMode();
          break;
 
