@@ -80,8 +80,9 @@ void ShowStayAwakePanel(bool show) {
          data.pszModuleName = _awakePanel.getPluginFileName();
          data.dlgID = MI_GOTO_PANEL;
          data.pszName = MENU_PANEL_NAME;
-         data.hIconTab = (HICON)::LoadImage(_gModule, MAKEINTRESOURCE(IDI_STAYAWAKE_BTN_STD), IMAGE_ICON, 14, 14,
-            LR_LOADMAP3DCOLORS | LR_LOADTRANSPARENT);
+         data.hIconTab = (HICON)::LoadImage(_gModule,
+            MAKEINTRESOURCE(nppMessage(NPPM_ISDARKMODEENABLED, 0, 0) ? IDI_STAYAWAKE_DOCK_DARK : IDI_STAYAWAKE_BTN_STD),
+            IMAGE_ICON, 14, 14, LR_LOADMAP3DCOLORS | LR_LOADTRANSPARENT);
 
          nppMessage(NPPM_DMMREGASDCKDLG, 0, (LPARAM)& data);
 

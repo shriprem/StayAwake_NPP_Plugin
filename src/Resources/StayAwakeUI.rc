@@ -23,3 +23,4 @@ END
 // BITMAPS
 IDB_STAYAWAKE_ABOUT_BITMAP BITMAP                  "about.bmp"
 IDI_STAYAWAKE_BTN_STD ICON                         "StayAwake.ico"
+IDI_STAYAWAKE_DOCK_DARK ICON                       "StayAwake_dock.ico"

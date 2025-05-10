@@ -59,11 +59,9 @@
     <ResourceCompile Include="..\src\Resources\StayAwakeUI.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\src\Resources\goto.bmp" />
     <Image Include="..\src\Resources\about.bmp" />
-    <Image Include="..\src\Resources\goto.ico" />
-    <Image Include="..\src\Resources\goto_fluent.ico" />
-    <Image Include="..\src\Resources\goto_dark.ico" />
+    <Image Include="..\src\Resources\StayAwake.ico" />
+    <Image Include="..\src\Resources\StayAwake_dock.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9D04DBD5-E12E-44E0-A683-6F43F21D533B}</ProjectGuid>
