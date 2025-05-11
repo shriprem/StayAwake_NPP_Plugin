@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by GoToLineColUI.rc
+// Used by StayAwakeUI.rc
 //
 #define SW_HIDE                         0
 #define HIDE_WINDOW                     0

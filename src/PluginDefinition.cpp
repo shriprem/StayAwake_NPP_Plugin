@@ -36,13 +36,13 @@ void pluginInit(HANDLE hModule) {
 void pluginCleanUp(){}
 
 void commandMenuInit() {
-   setCommand(MI_GOTO_PANEL, MENU_SHOW_PANEL, ToggleStayAwakePanel, NULL, _awakePanel.isVisible());
+   setCommand(MI_STAY_AWAKE_PANEL, MENU_SHOW_PANEL, ToggleStayAwakePanel, NULL, _awakePanel.isVisible());
    setCommand(MI_ABOUT_DIALOG, MENU_ABOUT, ShowAboutDialog);
 }
 
 
 void commandMenuCleanUp() {
-   delete pluginMenuItems[MI_GOTO_PANEL]._pShKey;
+   delete pluginMenuItems[MI_STAY_AWAKE_PANEL]._pShKey;
 }
 
 // Initialize plugin commands
@@ -75,7 +75,7 @@ UINT getDockPanelIcon() {
       return (Utils::matchStringInFile(sConfigFilePath, L"lightToolBarIconSet=\"4\"")) ? IDI_STAYAWAKE_BTN_STD : IDI_DOCK_LITE_MODE_ICON;
 }
 
-// Dockable GotoLineCol Dialog
+// Dockable StayAwake Dialog
 void ToggleStayAwakePanel() {
    ShowStayAwakePanel(!_awakePanel.isVisible());
 }
@@ -90,7 +90,7 @@ void ShowStayAwakePanel(bool show) {
 
          data.uMask = DWS_DF_CONT_RIGHT | DWS_ICONTAB;
          data.pszModuleName = _awakePanel.getPluginFileName();
-         data.dlgID = MI_GOTO_PANEL;
+         data.dlgID = MI_STAY_AWAKE_PANEL;
          data.pszName = MENU_PANEL_NAME;
          data.hIconTab = (HICON)::LoadImage(_gModule,
             MAKEINTRESOURCE(getDockPanelIcon()), IMAGE_ICON, 14, 14, LR_LOADMAP3DCOLORS | LR_LOADTRANSPARENT);

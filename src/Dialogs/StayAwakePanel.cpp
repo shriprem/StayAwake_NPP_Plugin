@@ -57,7 +57,7 @@ INT_PTR CALLBACK StayAwakePanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM
       break;
 
    case WM_SHOWWINDOW:
-      Utils::checkMenuItem(MI_GOTO_PANEL, wParam);
+      Utils::checkMenuItem(MI_STAY_AWAKE_PANEL, wParam);
       break;
 
    default:

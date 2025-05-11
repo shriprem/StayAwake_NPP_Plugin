@@ -31,7 +31,7 @@ using std::wstring;
 using std::to_wstring;
 
 const enum MenuIndex {
-   MI_GOTO_PANEL,
+   MI_STAY_AWAKE_PANEL,
    MI_ABOUT_DIALOG,
    MI_COUNT
 };
