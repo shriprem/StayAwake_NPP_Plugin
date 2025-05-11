@@ -43,6 +43,7 @@ void commandMenuCleanUp();
 bool setCommand(size_t index, const wstring& cmdName, PFUNCPLUGINCMD pFunc, ShortcutKey* sk = NULL, bool checkOnInit = false);
 
 LRESULT nppMessage(UINT messageID, WPARAM wparam, LPARAM lparam);
+UINT getDockPanelIcon();
 
 // Plugin Command Functions
 void ToggleStayAwakePanel();

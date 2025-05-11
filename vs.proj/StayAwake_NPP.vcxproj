@@ -60,8 +60,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\src\Resources\about.bmp" />
+    <Image Include="..\src\Resources\dock_dark.ico" />
+    <Image Include="..\src\Resources\dock_lite.ico" />
     <Image Include="..\src\Resources\StayAwake.ico" />
-    <Image Include="..\src\Resources\StayAwake_dock.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9D04DBD5-E12E-44E0-A683-6F43F21D533B}</ProjectGuid>

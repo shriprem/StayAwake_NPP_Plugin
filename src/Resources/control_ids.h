@@ -10,7 +10,8 @@
 
 #define IDB_STAYAWAKE_ABOUT_BITMAP      9011
 #define IDI_STAYAWAKE_BTN_STD           9012
-#define IDI_STAYAWAKE_DOCK_DARK         9013
+#define IDI_DOCK_DARK_MODE_ICON         9013
+#define IDI_DOCK_LITE_MODE_ICON         9014
 
 
 #define IDD_ABOUT_DIALOG                12000

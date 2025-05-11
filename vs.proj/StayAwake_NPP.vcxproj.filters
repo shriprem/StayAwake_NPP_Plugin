@@ -108,10 +108,13 @@
     <Image Include="..\src\Resources\about.bmp">
       <Filter>Resources\Bitmaps</Filter>
     </Image>
-    <Image Include="..\src\Resources\StayAwake_dock.ico">
+    <Image Include="..\src\Resources\StayAwake.ico">
       <Filter>Resources\Icons</Filter>
     </Image>
-    <Image Include="..\src\Resources\StayAwake.ico">
+    <Image Include="..\src\Resources\dock_dark.ico">
+      <Filter>Resources\Icons</Filter>
+    </Image>
+    <Image Include="..\src\Resources\dock_lite.ico">
       <Filter>Resources\Icons</Filter>
     </Image>
   </ItemGroup>
