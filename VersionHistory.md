@@ -1,10 +1,10 @@
 ## Version History
 
-### Version 1.0.0.3 (Pre-Release) [April 12, 2025]
+### Version 1.0.0.3 (Pre-release) [May 12, 2025]
 * Removed custom Darkmode code. Switched to Darkmode rendering provided by Notepad++. This switch will reduce the plugin DLL size by 37KB for the 64-bit version, and by 48KB for the 32-bit version.
 * Dock Panel icon will be rendered with Fluent or Standard icon depending on the selection under `Notepad++ menu: Settings » Preferences... » Toolbar`. [_Note: To see this feature in action, you will need a build of Notepad++ with the new plugin API message: `NPPM_GETTOOLBARICONSETMODE`._]
 
-**Pre-Release:** [1.0.0.3 Pre-Release](https://github.com/shriprem/StayAwake_NPP_Plugin/releases/tag/v1.0.0.3)
+**Pre-Release:** [1.0.0.3 Pre-release](https://github.com/shriprem/StayAwake_NPP_Plugin/releases/tag/v1.0.0.3)
 
 ---
 
