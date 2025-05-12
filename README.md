@@ -8,7 +8,7 @@
 ![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/shriprem/StayAwake_NPP_Plugin/CI_build.yml)
 ![GitHub issues](https://img.shields.io/github/issues/shriprem/StayAwake_NPP_Plugin)
 
-[Current Version: 1.0.0.2](https://github.com/shriprem/StayAwake_NPP_Plugin/blob/main/VersionHistory.md)
+[Current Version: 1.0.0.3 (Pre-Release)](https://github.com/shriprem/StayAwake_NPP_Plugin/blob/main/VersionHistory.md)
 
 StayAwake is a simple plugin for Notepad++ that enables you to maintain an _Active_ status on Microsoft Teams (and perhaps other such messaging applications). StayAwake also prevents screen saver activation, screen blanking, and Windows session lockouts.
 
