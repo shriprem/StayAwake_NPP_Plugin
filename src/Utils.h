@@ -1,7 +1,6 @@
 #pragma once
 
 #include "PluginDefinition.h"
-#include <fstream>
 #include <ShlObj_core.h>
 
 #define PREFS_TIP_MAX_WIDTH         400
@@ -16,5 +15,4 @@ namespace Utils {
    void showEditBalloonTip(HWND hEdit, LPCWSTR title, LPCWSTR text);
    wstring getVersionInfo(LPCWSTR key);
    void loadBitmap(HWND hDlg, int controlID, int resource);
-   bool matchStringInFile(wstring filePath, wstring text);
 }

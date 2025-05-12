@@ -125,20 +125,3 @@ void Utils::loadBitmap(HWND hDlg, int controlID, int resource) {
       DeleteObject(hBitmap);
    }
 }
-
-bool Utils::matchStringInFile(wstring filePath, wstring text) {
-   std::wifstream file(filePath);
-
-   if (!file.is_open()) return false;
-
-   wstring line{};
-
-   while (std::getline(file, line)) {
-      if (line.find(text) != wstring::npos) {
-         file.close();
-         return true;
-      }
-   }
-
-   return false;
-}
