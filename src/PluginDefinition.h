@@ -36,15 +36,17 @@ const enum MenuIndex {
    MI_COUNT
 };
 
+
+// Internal use functions
 void pluginInit(HANDLE hModule);
 void pluginCleanUp();
 void commandMenuInit();
 void commandMenuCleanUp();
 bool setCommand(size_t index, const wstring& cmdName, PFUNCPLUGINCMD pFunc, ShortcutKey* sk = NULL, bool checkOnInit = false);
 
-LRESULT NppMessage(UINT messageID, WPARAM wparam, LPARAM lparam);
 
-// Plugin Command Functions
+// Internal/External use functions
+LRESULT NppMessage(UINT messageID, WPARAM wparam, LPARAM lparam);
 void ToggleStayAwakePanel();
 void ShowStayAwakePanel(bool show);
 void ShowAboutDialog();
