@@ -69,7 +69,7 @@ HWND Utils::addTooltip(HWND hDlg, int controlID, const wstring& pTitle, const ws
 }
 
 void Utils::checkMenuItem(int menuIndex, bool check) {
-   nppMessage(NPPM_SETMENUITEMCHECK, pluginMenuItems[menuIndex]._cmdID, check);
+   NppMessage(NPPM_SETMENUITEMCHECK, pluginMenuItems[menuIndex]._cmdID, check);
 }
 
 void Utils::showEditBalloonTip(HWND hEdit, LPCWSTR title, LPCWSTR text) {
