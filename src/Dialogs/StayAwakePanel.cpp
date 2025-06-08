@@ -99,6 +99,7 @@ void StayAwakePanel::display(bool toShow) {
 }
 
 void StayAwakePanel::refreshDarkMode() {
+   RegisterDockPanelIcon();
    redraw();
 
    if (_aboutDlg.isCreated())

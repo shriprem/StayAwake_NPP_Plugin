@@ -23,6 +23,7 @@
 #endif
 
 FuncItem pluginMenuItems[MI_COUNT];
+tTbData  _dockpanelData{};
 
 NppData nppData;
 HINSTANCE _gModule;
@@ -63,13 +64,17 @@ LRESULT nppMessage(UINT messageID, WPARAM wparam, LPARAM lparam) {
    return SendMessage(nppData._nppHandle, messageID, wparam, lparam);
 }
 
-UINT getDockPanelIcon() {
-   bool bStandardIcons{ nppMessage(NPPM_GETTOOLBARICONSETCHOICE, 0, 0) == 4 };
+void RegisterDockPanelIcon() {
+   const bool bStandardIcons{ nppMessage(NPPM_GETTOOLBARICONSETCHOICE, 0, 0) == 4 };
 
-   if (nppMessage(NPPM_ISDARKMODEENABLED, 0, 0))
-      return bStandardIcons ? IDI_STAYAWAKE_BTN_STD : IDI_DOCK_DARK_MODE_ICON;
-   else
-      return bStandardIcons ? IDI_STAYAWAKE_BTN_STD : IDI_DOCK_LITE_MODE_ICON;
+   const UINT iconID = (nppMessage(NPPM_ISDARKMODEENABLED, 0, 0)) ?
+      (bStandardIcons ? IDI_STAYAWAKE_BTN_STD : IDI_DOCK_DARK_MODE_ICON) :
+      (bStandardIcons ? IDI_STAYAWAKE_BTN_STD : IDI_DOCK_LITE_MODE_ICON);
+
+   _dockpanelData.hIconTab = static_cast<HICON>(LoadImage(_gModule, MAKEINTRESOURCE(iconID),
+      IMAGE_ICON, 14, 14, LR_LOADMAP3DCOLORS | LR_LOADTRANSPARENT));
+
+   nppMessage(NPPM_DMMREGASDCKDLG, 0, reinterpret_cast<LPARAM>(&_dockpanelData));
 }
 
 // Dockable StayAwake Dialog
@@ -80,19 +85,15 @@ void ToggleStayAwakePanel() {
 void ShowStayAwakePanel(bool show) {
    if (show && !_awakePanel.isVisible()) {
       _awakePanel.setParent(nppData._nppHandle);
-      tTbData  data {};
 
       if (!_awakePanel.isCreated()) {
-         _awakePanel.create(&data);
+         _awakePanel.create(&_dockpanelData);
 
-         data.uMask = DWS_DF_CONT_RIGHT | DWS_ICONTAB;
-         data.pszModuleName = _awakePanel.getPluginFileName();
-         data.dlgID = MI_STAY_AWAKE_PANEL;
-         data.pszName = MENU_PANEL_NAME;
-         data.hIconTab = (HICON)::LoadImage(_gModule,
-            MAKEINTRESOURCE(getDockPanelIcon()), IMAGE_ICON, 14, 14, LR_LOADMAP3DCOLORS | LR_LOADTRANSPARENT);
-
-         nppMessage(NPPM_DMMREGASDCKDLG, 0, (LPARAM)& data);
+         _dockpanelData.uMask = DWS_DF_CONT_RIGHT | DWS_ICONTAB;
+         _dockpanelData.pszModuleName = _awakePanel.getPluginFileName();
+         _dockpanelData.dlgID = MI_STAY_AWAKE_PANEL;
+         _dockpanelData.pszName = MENU_PANEL_NAME;
+         RegisterDockPanelIcon();
 
          _awakePanel.initPanel();
       }
@@ -105,7 +106,7 @@ void ShowAboutDialog() {
    _awakePanel.showAboutDialog();
 }
 
-void refreshDarkMode() {
+void RefreshDarkMode() {
    if (_awakePanel.isCreated())
       _awakePanel.refreshDarkMode();
 }
