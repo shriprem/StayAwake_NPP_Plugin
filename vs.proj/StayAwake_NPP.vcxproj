@@ -65,7 +65,7 @@
     <Image Include="..\src\Resources\StayAwake.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{9D04DBD5-E12E-44E0-A683-6F43F21D533B}</ProjectGuid>
+    <ProjectGuid>{9C556384-6F56-417E-BCB2-E19CE3094172}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>StayAwake_NPP</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
