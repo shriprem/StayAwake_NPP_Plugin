@@ -1,6 +1,9 @@
 #include "StayAwakePanel.h"
 #include "AboutDialog.h"
 
+#define VK_UNASSIGNED_01 0x97
+#define VK_UNASSIGNED_10 0xE8
+
 extern HINSTANCE _gModule;
 extern StayAwakePanel _awakePanel;
 AboutDialog _aboutDlg;
@@ -8,6 +11,7 @@ AboutDialog _aboutDlg;
 
 constexpr auto PREF_INI_FILE = L"StayAwake.ini";
 constexpr auto PREF_DEFAULTS = L"Defaults";
+constexpr auto PREF_AWAKE_KEYCODE = L"AwakeKeyCode";
 constexpr auto PREF_TIMER_INTERVAL = L"TimerIntervalInSeconds";
 
 constexpr auto MIN_PERIOD{ 10 };
@@ -18,6 +22,16 @@ INT_PTR CALLBACK StayAwakePanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM
    switch (message) {
    case WM_COMMAND:
       switch LOWORD(wParam) {
+
+      case IDC_STAYAWAKE_KEY_LIST:
+         switch HIWORD(wParam) {
+         case CBN_SELCHANGE:
+            nAwakeKeyCode = static_cast<int>(SendMessage(hKeyCodes, CB_GETCURSEL, 0, 0));
+            nAwakeKeyCode %= 12;
+            WritePrivateProfileString(PREF_DEFAULTS, PREF_AWAKE_KEYCODE, to_wstring(nAwakeKeyCode).c_str(), sIniFilePath);
+            break;
+         }
+         break;
 
       case IDC_STAYAWAKE_INTERVAL:
          if (HIWORD(wParam) == EN_KILLFOCUS)
@@ -71,6 +85,22 @@ void StayAwakePanel::initPanel() {
    NppMessage(NPPM_GETPLUGINSCONFIGDIR, MAX_PATH, (LPARAM)sIniFilePath);
    PathAppend(sIniFilePath, PREF_INI_FILE);
 
+   // Init KeyCodes List
+   hKeyCodes = GetDlgItem(_hSelf, IDC_STAYAWAKE_KEY_LIST);
+
+   SendMessage(hKeyCodes, CB_ADDSTRING, NULL, (LPARAM)L"Scroll Lock toggles");
+   SendMessage(hKeyCodes, CB_ADDSTRING, NULL, (LPARAM)L"Volume Down & Up");
+
+   for (int i{ 1 }; i <= 10; i++) {
+      SendMessage(hKeyCodes, CB_ADDSTRING, NULL, (LPARAM)(L"Unassigned Key #" + to_wstring(i)).c_str());
+   }
+
+   nAwakeKeyCode = GetPrivateProfileInt(PREF_DEFAULTS, PREF_AWAKE_KEYCODE, nTimerSeconds, sIniFilePath);
+   nAwakeKeyCode %= 12;
+
+   SendMessage(hKeyCodes, CB_SETCURSEL, nAwakeKeyCode, NULL);
+
+   // Init Timer Seconds
    nTimerSeconds = GetPrivateProfileInt(PREF_DEFAULTS, PREF_TIMER_INTERVAL, nTimerSeconds, sIniFilePath);
    nTimerSeconds = (nTimerSeconds < MIN_PERIOD || nTimerSeconds > MAX_PERIOD) ? 240 : nTimerSeconds; // default to 4 minutes if out of range
 
@@ -120,20 +150,54 @@ void StayAwakePanel::initTimer() {
 }
 
 void StayAwakePanel::toggleScrollLock() {
-   keybd_event(VK_SCROLL, 0, KEYEVENTF_EXTENDEDKEY | 0, 0);
-   keybd_event(VK_SCROLL, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
-   Sleep(10);
-   keybd_event(VK_SCROLL, 0, KEYEVENTF_EXTENDEDKEY | 0, 0);
-   keybd_event(VK_SCROLL, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
+   switch (nAwakeKeyCode) {
+   case 1:
+      keybd_event(VK_VOLUME_DOWN, 0, KEYEVENTF_EXTENDEDKEY | 0, 0);
+      keybd_event(VK_VOLUME_DOWN, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
+      Sleep(10);
+      keybd_event(VK_VOLUME_UP, 0, KEYEVENTF_EXTENDEDKEY | 0, 0);
+      keybd_event(VK_VOLUME_UP, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
+      break;
+
+   case 2:
+   case 3:
+   case 4:
+   case 5:
+   case 6:
+   case 7:
+   case 8:
+   case 9:
+   case 10:
+   {
+      BYTE keycode{ static_cast<BYTE>(VK_UNASSIGNED_01 + nAwakeKeyCode - 2) };
+      keybd_event(keycode, 0, KEYEVENTF_EXTENDEDKEY | 0, 0);
+      keybd_event(keycode, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
+      break;
+   }
+
+   case 11:
+      keybd_event(VK_UNASSIGNED_10, 0, KEYEVENTF_EXTENDEDKEY | 0, 0);
+      keybd_event(VK_UNASSIGNED_10, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
+      break;
+
+   default:
+      keybd_event(VK_SCROLL, 0, KEYEVENTF_EXTENDEDKEY | 0, 0);
+      keybd_event(VK_SCROLL, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
+      Sleep(10);
+      keybd_event(VK_SCROLL, 0, KEYEVENTF_EXTENDEDKEY | 0, 0);
+      keybd_event(VK_SCROLL, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
+      break;
+
+   }
 
    SYSTEMTIME lastTime{};
    GetLocalTime(&lastTime);
-   SetDlgItemText(_hSelf, IDC_STAYAWAKE_LAST_TOGGLE, Utils::formatSystemTime(lastTime, L"Scroll Lock was last toggled").c_str());
+   SetDlgItemText(_hSelf, IDC_STAYAWAKE_LAST_TOGGLE, Utils::formatSystemTime(lastTime, L"Last StayAwake event").c_str());
 
    SYSTEMTIME nextTime{};
    GetSystemTime(&nextTime);
    Utils::addSecondsToTime(nextTime, nTimerSeconds);
-   SetDlgItemText(_hSelf, IDC_STAYAWAKE_NEXT_TOGGLE, Utils::formatSystemTime(nextTime, L"Scroll Lock will next toggle").c_str());
+   SetDlgItemText(_hSelf, IDC_STAYAWAKE_NEXT_TOGGLE, Utils::formatSystemTime(nextTime, L"Next StayAwake event").c_str());
 }
 
 void StayAwakePanel::onKillfocusInterval() {

@@ -20,9 +20,11 @@ public:
 protected:
    bool bInitialized{};
    UINT_PTR nTimerID{};
+   UINT nAwakeKeyCode{ 0 };
    UINT nTimerSeconds{ 240 };
    TCHAR sIniFilePath[MAX_PATH]{};
 
+   HWND hKeyCodes{};
 
    virtual INT_PTR CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam);
 
