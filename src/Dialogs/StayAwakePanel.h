@@ -24,7 +24,7 @@ protected:
    UINT nTimerSeconds{ 240 };
    TCHAR sIniFilePath[MAX_PATH]{};
 
-   HWND hKeyCodes{};
+   HWND hKeyCodes{}, hPauseResume{};
 
    virtual INT_PTR CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam);
 

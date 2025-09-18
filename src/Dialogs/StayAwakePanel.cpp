@@ -3,6 +3,8 @@
 
 #define VK_UNASSIGNED_01 0x97
 #define VK_UNASSIGNED_10 0xE8
+#define BTN_TEXT_PAUSE L"&Pause"
+#define BTN_TEXT_RESUME L"&Resume"
 
 extern HINSTANCE _gModule;
 extern StayAwakePanel _awakePanel;
@@ -41,6 +43,24 @@ INT_PTR CALLBACK StayAwakePanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM
       case IDC_STAYAWAKE_SET_INTERVAL:
          onSetInterval();
          break;
+
+      case IDC_STAYAWAKE_PAUSE_RESUME_BTN:
+      {
+         wstring btnText(20, '\0');
+         GetWindowText(hPauseResume, btnText.data(), 20);
+
+         if (btnText.starts_with(BTN_TEXT_PAUSE)) {
+            SetDlgItemText(_hSelf, IDC_STAYAWAKE_NEXT_TOGGLE, L"Next StayAwake event:         PAUSED");
+            SetWindowText(hPauseResume, BTN_TEXT_RESUME);
+            KillTimer(_hSelf, nTimerID);
+         }
+         else {
+            SetWindowText(hPauseResume, BTN_TEXT_PAUSE);
+            initTimer();
+         }
+
+         break;
+      }
 
       case IDCLOSE:
          display(false);
@@ -85,9 +105,10 @@ void StayAwakePanel::initPanel() {
    NppMessage(NPPM_GETPLUGINSCONFIGDIR, MAX_PATH, (LPARAM)sIniFilePath);
    PathAppend(sIniFilePath, PREF_INI_FILE);
 
-   // Init KeyCodes List
    hKeyCodes = GetDlgItem(_hSelf, IDC_STAYAWAKE_KEY_LIST);
+   hPauseResume = GetDlgItem(_hSelf, IDC_STAYAWAKE_PAUSE_RESUME_BTN);
 
+   // Init KeyCodes List
    SendMessage(hKeyCodes, CB_ADDSTRING, NULL, (LPARAM)L"Scroll Lock toggles");
    SendMessage(hKeyCodes, CB_ADDSTRING, NULL, (LPARAM)L"Volume Down & Up");
 
