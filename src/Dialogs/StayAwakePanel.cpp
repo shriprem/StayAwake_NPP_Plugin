@@ -49,15 +49,10 @@ INT_PTR CALLBACK StayAwakePanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM
          wstring btnText(20, '\0');
          GetWindowText(hPauseResume, btnText.data(), 20);
 
-         if (btnText.starts_with(BTN_TEXT_PAUSE)) {
-            SetDlgItemText(_hSelf, IDC_STAYAWAKE_NEXT_TOGGLE, L"Next StayAwake event:         PAUSED");
-            SetWindowText(hPauseResume, BTN_TEXT_RESUME);
-            KillTimer(_hSelf, nTimerID);
-         }
-         else {
-            SetWindowText(hPauseResume, BTN_TEXT_PAUSE);
+         if (btnText.starts_with(BTN_TEXT_PAUSE))
+            pauseTimer();
+         else
             initTimer();
-         }
 
          break;
       }
@@ -74,7 +69,7 @@ INT_PTR CALLBACK StayAwakePanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM
       break;
 
    case WM_TIMER:
-      toggleScrollLock();
+      simulateAwakeKeyPress();
       break;
 
    case WM_LBUTTONDOWN:
@@ -109,7 +104,7 @@ void StayAwakePanel::initPanel() {
    hPauseResume = GetDlgItem(_hSelf, IDC_STAYAWAKE_PAUSE_RESUME_BTN);
 
    // Init KeyCodes List
-   SendMessage(hKeyCodes, CB_ADDSTRING, NULL, (LPARAM)L"Scroll Lock toggles");
+   SendMessage(hKeyCodes, CB_ADDSTRING, NULL, (LPARAM)L"Scroll Lock cycling");
    SendMessage(hKeyCodes, CB_ADDSTRING, NULL, (LPARAM)L"Volume Down & Up");
 
    for (int i{ 1 }; i <= 10; i++) {
@@ -166,11 +161,20 @@ void StayAwakePanel::showAboutDialog() {
 }
 
 void StayAwakePanel::initTimer() {
-   toggleScrollLock();
+   simulateAwakeKeyPress();
    nTimerID = SetTimer(_hSelf, nTimerID, nTimerSeconds * 1000, NULL);
+   SetWindowText(hPauseResume, BTN_TEXT_PAUSE);
 }
 
-void StayAwakePanel::toggleScrollLock() {
+void StayAwakePanel::pauseTimer() {
+   SetDlgItemText(_hSelf, IDC_STAYAWAKE_NEXT_TOGGLE, L"Next StayAwake event:         PAUSED");
+   SetWindowText(hPauseResume, BTN_TEXT_RESUME);
+
+   KillTimer(_hSelf, nTimerID);
+   nTimerID = 0;
+}
+
+void StayAwakePanel::simulateAwakeKeyPress() {
    switch (nAwakeKeyCode) {
    case 1:
       keybd_event(VK_VOLUME_DOWN, 0, KEYEVENTF_EXTENDEDKEY | 0, 0);

@@ -29,7 +29,8 @@ protected:
    virtual INT_PTR CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam);
 
    void initTimer();
-   void toggleScrollLock();
+   void pauseTimer();
+   void simulateAwakeKeyPress();
    void onKillfocusInterval();
    void onSetInterval();
 
