@@ -54,7 +54,12 @@ INT_PTR CALLBACK StayAwakePanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM
 
          break;
 
+      case IDCANCEL:
+         display(false);
+         break;
+
       case IDCLOSE:
+         KillTimer(_hSelf, nTimerID);
          display(false);
          break;
 
@@ -128,16 +133,14 @@ void StayAwakePanel::initPanel() {
    Utils::loadBitmap(_hSelf, IDC_STAYAWAKE_ABOUT_BUTTON, IDB_STAYAWAKE_ABOUT_BITMAP);
    Utils::addTooltip(_hSelf, IDC_STAYAWAKE_ABOUT_BUTTON, L"", ABOUT_DIALOG_TITLE, TRUE);
 
-   if (isTimerPaused())
-      showPausedInfo(TRUE);
-   else
-      initTimer();
+   if (isTimerPaused()) showPausedInfo(TRUE);
 }
 
 void StayAwakePanel::display(bool toShow) {
    DockingDlgInterface::display(toShow);
 
    if (toShow) {
+      initTimer();
       SetFocus(GetDlgItem(_hSelf, IDC_STAYAWAKE_INTERVAL));
    }
    else {
