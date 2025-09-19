@@ -140,7 +140,7 @@ void StayAwakePanel::display(bool toShow) {
    DockingDlgInterface::display(toShow);
 
    if (toShow) {
-      initTimer();
+      if (!isTimerPaused()) initTimer();
       SetFocus(GetDlgItem(_hSelf, IDC_STAYAWAKE_INTERVAL));
    }
    else {
