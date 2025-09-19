@@ -171,7 +171,6 @@ void StayAwakePanel::pauseTimer() {
    SetWindowText(hPauseResume, BTN_TEXT_RESUME);
 
    KillTimer(_hSelf, nTimerID);
-   nTimerID = 0;
 }
 
 void StayAwakePanel::simulateAwakeKeyPress() {

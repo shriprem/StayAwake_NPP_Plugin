@@ -19,7 +19,7 @@ public:
 
 protected:
    bool bInitialized{};
-   UINT_PTR nTimerID{};
+   UINT_PTR nTimerID{ 42 };
    UINT nAwakeKeyCode{ 0 };
    UINT nTimerSeconds{ 240 };
    TCHAR sIniFilePath[MAX_PATH]{};
