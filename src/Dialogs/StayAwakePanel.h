@@ -28,6 +28,10 @@ protected:
 
    virtual INT_PTR CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam);
 
+   wstring getPreference(const wstring key, const wstring defaultVal) const;
+   bool isTimerPaused();
+
+   void showPausedInfo(bool both);
    void initTimer();
    void pauseTimer();
    void simulateAwakeKeyPress();

@@ -1,11 +1,6 @@
 #include "StayAwakePanel.h"
 #include "AboutDialog.h"
 
-#define VK_UNASSIGNED_01 0x97
-#define VK_UNASSIGNED_10 0xE8
-#define BTN_TEXT_PAUSE L"&Pause"
-#define BTN_TEXT_RESUME L"&Resume"
-
 extern HINSTANCE _gModule;
 extern StayAwakePanel _awakePanel;
 AboutDialog _aboutDlg;
@@ -14,7 +9,14 @@ AboutDialog _aboutDlg;
 constexpr auto PREF_INI_FILE = L"StayAwake.ini";
 constexpr auto PREF_DEFAULTS = L"Defaults";
 constexpr auto PREF_AWAKE_KEYCODE = L"AwakeKeyCode";
+constexpr auto PREF_AWAKE_PAUSED = L"AwakePaused";
 constexpr auto PREF_TIMER_INTERVAL = L"TimerIntervalInSeconds";
+
+constexpr auto BTN_TEXT_PAUSE = L"&Pause";
+constexpr auto BTN_TEXT_RESUME = L"&Resume";
+
+constexpr auto VK_UNASSIGNED_01 = 0x97;
+constexpr auto VK_UNASSIGNED_10 = 0xE8;
 
 constexpr auto MIN_PERIOD{ 10 };
 constexpr auto MAX_PERIOD{ 9990 };
@@ -45,17 +47,12 @@ INT_PTR CALLBACK StayAwakePanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM
          break;
 
       case IDC_STAYAWAKE_PAUSE_RESUME_BTN:
-      {
-         wstring btnText(20, '\0');
-         GetWindowText(hPauseResume, btnText.data(), 20);
-
-         if (btnText.starts_with(BTN_TEXT_PAUSE))
-            pauseTimer();
-         else
+         if (isTimerPaused())
             initTimer();
+         else
+            pauseTimer();
 
          break;
-      }
 
       case IDCLOSE:
          display(false);
@@ -126,10 +123,15 @@ void StayAwakePanel::initPanel() {
    Utils::addTooltip(_hSelf, IDC_STAYAWAKE_INTERVAL, L"",
       wstring{ L"Number between " } + to_wstring(MIN_PERIOD) + L" and " + to_wstring(MAX_PERIOD), 3, TRUE);
 
+   SetWindowText(hPauseResume, isTimerPaused() ? BTN_TEXT_RESUME :BTN_TEXT_PAUSE);
+
    Utils::loadBitmap(_hSelf, IDC_STAYAWAKE_ABOUT_BUTTON, IDB_STAYAWAKE_ABOUT_BITMAP);
    Utils::addTooltip(_hSelf, IDC_STAYAWAKE_ABOUT_BUTTON, L"", ABOUT_DIALOG_TITLE, TRUE);
 
-   initTimer();
+   if (isTimerPaused())
+      showPausedInfo(TRUE);
+   else
+      initTimer();
 }
 
 void StayAwakePanel::display(bool toShow) {
@@ -160,17 +162,40 @@ void StayAwakePanel::showAboutDialog() {
    _aboutDlg.doDialog((HINSTANCE)_gModule);
 }
 
+wstring StayAwakePanel::getPreference(const wstring key, const wstring defaultVal) const {
+   const int bufSize{ MAX_PATH };
+   wstring ftBuf(bufSize, '\0');
+
+   GetPrivateProfileString(PREF_DEFAULTS, key.c_str(), defaultVal.c_str(), ftBuf.data(), bufSize, sIniFilePath);
+
+   return wstring{ ftBuf.c_str() };
+}
+
+bool StayAwakePanel::isTimerPaused() {
+   return (getPreference(PREF_AWAKE_PAUSED, L"N") == L"Y");
+}
+
+void StayAwakePanel::showPausedInfo(bool both) {
+   if (both)
+      SetDlgItemText(_hSelf, IDC_STAYAWAKE_LAST_TOGGLE, L"Last StayAwake event:         PAUSED");
+
+   SetDlgItemText(_hSelf, IDC_STAYAWAKE_NEXT_TOGGLE, L"Next StayAwake event:         PAUSED");
+}
+
 void StayAwakePanel::initTimer() {
    simulateAwakeKeyPress();
    nTimerID = SetTimer(_hSelf, nTimerID, nTimerSeconds * 1000, NULL);
+
    SetWindowText(hPauseResume, BTN_TEXT_PAUSE);
+   WritePrivateProfileString(PREF_DEFAULTS, PREF_AWAKE_PAUSED, L"N", sIniFilePath);
 }
 
 void StayAwakePanel::pauseTimer() {
-   SetDlgItemText(_hSelf, IDC_STAYAWAKE_NEXT_TOGGLE, L"Next StayAwake event:         PAUSED");
-   SetWindowText(hPauseResume, BTN_TEXT_RESUME);
-
    KillTimer(_hSelf, nTimerID);
+
+   SetWindowText(hPauseResume, BTN_TEXT_RESUME);
+   WritePrivateProfileString(PREF_DEFAULTS, PREF_AWAKE_PAUSED, L"Y", sIniFilePath);
+   showPausedInfo(FALSE);
 }
 
 void StayAwakePanel::simulateAwakeKeyPress() {
