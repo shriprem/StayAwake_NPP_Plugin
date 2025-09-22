@@ -29,6 +29,8 @@ NppData nppData;
 HINSTANCE _gModule;
 StayAwakePanel _awakePanel;
 
+bool isStealthMode{};
+
 void pluginInit(HANDLE hModule) {
    _gModule = (HINSTANCE)hModule;
    _awakePanel.init(_gModule, NULL);
@@ -38,7 +40,10 @@ void pluginCleanUp(){}
 
 void commandMenuInit() {
    setCommand(MI_STAY_AWAKE_PANEL, MENU_SHOW_PANEL, ToggleStayAwakePanel, NULL, _awakePanel.isVisible());
+   setCommand(MI_STAY_AWAKE_STEALTH, MENU_STEALTH_MODE, StayAwakeStealthMode, NULL, TRUE);
    setCommand(MI_ABOUT_DIALOG, MENU_ABOUT, ShowAboutDialog);
+
+   StayAwakeStealthMode();
 }
 
 
@@ -77,6 +82,17 @@ void RegisterDockPanelIcon() {
    NppMessage(NPPM_DMMREGASDCKDLG, 0, reinterpret_cast<LPARAM>(&_dockpanelData));
 }
 
+void InitStayAwakePanel() {
+   if (!_awakePanel.isCreated()) {
+      _awakePanel.create(&_dockpanelData);
+
+      _dockpanelData.uMask = DWS_DF_CONT_RIGHT | DWS_ICONTAB;
+      _dockpanelData.pszModuleName = _awakePanel.getPluginFileName();
+      _dockpanelData.dlgID = MI_STAY_AWAKE_PANEL;
+      _dockpanelData.pszName = MENU_PANEL_NAME;
+   }
+}
+
 // Dockable StayAwake Dialog
 void ToggleStayAwakePanel() {
    ShowStayAwakePanel(!_awakePanel.isVisible());
@@ -85,21 +101,31 @@ void ToggleStayAwakePanel() {
 void ShowStayAwakePanel(bool show) {
    if (show && !_awakePanel.isVisible()) {
       _awakePanel.setParent(nppData._nppHandle);
+      InitStayAwakePanel();
+      RegisterDockPanelIcon();
+      _awakePanel.initPanel();
 
-      if (!_awakePanel.isCreated()) {
-         _awakePanel.create(&_dockpanelData);
-
-         _dockpanelData.uMask = DWS_DF_CONT_RIGHT | DWS_ICONTAB;
-         _dockpanelData.pszModuleName = _awakePanel.getPluginFileName();
-         _dockpanelData.dlgID = MI_STAY_AWAKE_PANEL;
-         _dockpanelData.pszName = MENU_PANEL_NAME;
-         RegisterDockPanelIcon();
-
-         _awakePanel.initPanel();
-      }
+      isStealthMode = TRUE;
+      Utils::checkMenuItem(MI_STAY_AWAKE_STEALTH, isStealthMode);
    }
 
    _awakePanel.display(show);
+}
+
+void StayAwakeStealthMode() {
+   if (isStealthMode) {
+      _awakePanel.killTimer();
+   }
+   else {
+      InitStayAwakePanel();
+      _awakePanel.initConfig();
+
+      if (!_awakePanel.isTimerPaused())
+         _awakePanel.initTimer();
+   }
+
+   isStealthMode = !isStealthMode;
+   Utils::checkMenuItem(MI_STAY_AWAKE_STEALTH, isStealthMode);
 }
 
 void ShowAboutDialog() {

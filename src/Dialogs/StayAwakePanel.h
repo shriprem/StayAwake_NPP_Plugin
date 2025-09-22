@@ -9,7 +9,12 @@ public:
 
    StayAwakePanel() :DockingDlgInterface(IDD_STAYAWAKE_DOCKPANEL) {};
 
+   void initConfig();
    void initPanel();
+
+   bool isTimerPaused();
+   void initTimer();
+   void killTimer();
 
    virtual void display(bool toShow=true);
    void refreshDarkMode();
@@ -18,7 +23,7 @@ public:
    void showAboutDialog();
 
 protected:
-   bool bInitialized{};
+   bool bPanelInitialized{};
    UINT_PTR nTimerID{ 42 };
    UINT nAwakeKeyCode{ 0 };
    UINT nTimerSeconds{ 240 };
@@ -29,11 +34,9 @@ protected:
    virtual INT_PTR CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam);
 
    wstring getPreference(const wstring key, const wstring defaultVal) const;
-   bool isTimerPaused();
 
-   void showPausedInfo(bool both);
-   void initTimer();
    void pauseTimer();
+   void showPausedInfo(bool both);
    void simulateAwakeKeyPress();
    void onKillfocusInterval();
    void onSetInterval();

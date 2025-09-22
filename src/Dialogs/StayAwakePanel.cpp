@@ -55,11 +55,7 @@ INT_PTR CALLBACK StayAwakePanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM
          break;
 
       case IDCANCEL:
-         display(false);
-         break;
-
       case IDCLOSE:
-         KillTimer(_hSelf, nTimerID);
          display(false);
          break;
 
@@ -98,9 +94,19 @@ INT_PTR CALLBACK StayAwakePanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM
    return FALSE;
 }
 
-void StayAwakePanel::initPanel() {
+void StayAwakePanel::initConfig() {
    NppMessage(NPPM_GETPLUGINSCONFIGDIR, MAX_PATH, (LPARAM)sIniFilePath);
    PathAppend(sIniFilePath, PREF_INI_FILE);
+
+   nAwakeKeyCode = GetPrivateProfileInt(PREF_DEFAULTS, PREF_AWAKE_KEYCODE, nTimerSeconds, sIniFilePath);
+   nAwakeKeyCode %= 12;
+
+   nTimerSeconds = GetPrivateProfileInt(PREF_DEFAULTS, PREF_TIMER_INTERVAL, nTimerSeconds, sIniFilePath);
+   nTimerSeconds = (nTimerSeconds < MIN_PERIOD || nTimerSeconds > MAX_PERIOD) ? 240 : nTimerSeconds; // default to 4 minutes if out of range
+}
+
+void StayAwakePanel::initPanel() {
+   initConfig();
 
    hKeyCodes = GetDlgItem(_hSelf, IDC_STAYAWAKE_KEY_LIST);
    hPauseResume = GetDlgItem(_hSelf, IDC_STAYAWAKE_PAUSE_RESUME_BTN);
@@ -113,17 +119,10 @@ void StayAwakePanel::initPanel() {
       SendMessage(hKeyCodes, CB_ADDSTRING, NULL, (LPARAM)(L"Unassigned Key #" + to_wstring(i)).c_str());
    }
 
-   nAwakeKeyCode = GetPrivateProfileInt(PREF_DEFAULTS, PREF_AWAKE_KEYCODE, nTimerSeconds, sIniFilePath);
-   nAwakeKeyCode %= 12;
-
    SendMessage(hKeyCodes, CB_SETCURSEL, nAwakeKeyCode, NULL);
 
    // Init Timer Seconds
-   nTimerSeconds = GetPrivateProfileInt(PREF_DEFAULTS, PREF_TIMER_INTERVAL, nTimerSeconds, sIniFilePath);
-   nTimerSeconds = (nTimerSeconds < MIN_PERIOD || nTimerSeconds > MAX_PERIOD) ? 240 : nTimerSeconds; // default to 4 minutes if out of range
-
    SetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL, nTimerSeconds, FALSE);
-   bInitialized = true;
 
    Utils::addTooltip(_hSelf, IDC_STAYAWAKE_INTERVAL, L"",
       wstring{ L"Number between " } + to_wstring(MIN_PERIOD) + L" and " + to_wstring(MAX_PERIOD), 3, TRUE);
@@ -134,6 +133,7 @@ void StayAwakePanel::initPanel() {
    Utils::addTooltip(_hSelf, IDC_STAYAWAKE_ABOUT_BUTTON, L"", ABOUT_DIALOG_TITLE, TRUE);
 
    if (isTimerPaused()) showPausedInfo(TRUE);
+   bPanelInitialized = true;
 }
 
 void StayAwakePanel::display(bool toShow) {
@@ -189,8 +189,14 @@ void StayAwakePanel::initTimer() {
    simulateAwakeKeyPress();
    nTimerID = SetTimer(_hSelf, nTimerID, nTimerSeconds * 1000, NULL);
 
-   SetWindowText(hPauseResume, BTN_TEXT_PAUSE);
+   if (bPanelInitialized)
+      SetWindowText(hPauseResume, BTN_TEXT_PAUSE);
+
    WritePrivateProfileString(PREF_DEFAULTS, PREF_AWAKE_PAUSED, L"N", sIniFilePath);
+}
+
+void StayAwakePanel::killTimer() {
+   KillTimer(_hSelf, nTimerID);
 }
 
 void StayAwakePanel::pauseTimer() {
@@ -242,18 +248,20 @@ void StayAwakePanel::simulateAwakeKeyPress() {
 
    }
 
-   SYSTEMTIME lastTime{};
-   GetLocalTime(&lastTime);
-   SetDlgItemText(_hSelf, IDC_STAYAWAKE_LAST_TOGGLE, Utils::formatSystemTime(lastTime, L"Last StayAwake event").c_str());
+   if (bPanelInitialized) {
+      SYSTEMTIME lastTime{};
+      GetLocalTime(&lastTime);
+      SetDlgItemText(_hSelf, IDC_STAYAWAKE_LAST_TOGGLE, Utils::formatSystemTime(lastTime, L"Last StayAwake event").c_str());
 
-   SYSTEMTIME nextTime{};
-   GetSystemTime(&nextTime);
-   Utils::addSecondsToTime(nextTime, nTimerSeconds);
-   SetDlgItemText(_hSelf, IDC_STAYAWAKE_NEXT_TOGGLE, Utils::formatSystemTime(nextTime, L"Next StayAwake event").c_str());
+      SYSTEMTIME nextTime{};
+      GetSystemTime(&nextTime);
+      Utils::addSecondsToTime(nextTime, nTimerSeconds);
+      SetDlgItemText(_hSelf, IDC_STAYAWAKE_NEXT_TOGGLE, Utils::formatSystemTime(nextTime, L"Next StayAwake event").c_str());
+   }
 }
 
 void StayAwakePanel::onKillfocusInterval() {
-   if (!bInitialized) return;
+   if (!bPanelInitialized) return;
 
    UINT nInterval{ GetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL, nullptr, FALSE) };
 

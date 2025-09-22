@@ -32,6 +32,7 @@ using std::to_wstring;
 
 const enum MenuIndex {
    MI_STAY_AWAKE_PANEL,
+   MI_STAY_AWAKE_STEALTH,
    MI_ABOUT_DIALOG,
    MI_COUNT
 };
@@ -44,11 +45,13 @@ void commandMenuInit();
 void commandMenuCleanUp();
 bool setCommand(size_t index, const wstring& cmdName, PFUNCPLUGINCMD pFunc, ShortcutKey* sk = NULL, bool checkOnInit = false);
 
-
 // Internal/External use functions
+
 LRESULT NppMessage(UINT messageID, WPARAM wparam, LPARAM lparam);
+void InitStayAwakePanel();
 void ToggleStayAwakePanel();
 void ShowStayAwakePanel(bool show);
+void StayAwakeStealthMode();
 void ShowAboutDialog();
 
 void RegisterDockPanelIcon();

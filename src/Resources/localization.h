@@ -2,7 +2,8 @@
 
 // Common
 #define MENU_PANEL_NAME             L"StayAwake"
-#define MENU_SHOW_PANEL             L"&Show StayAwake Panel"
+#define MENU_SHOW_PANEL             L"&Show Panel"
+#define MENU_STEALTH_MODE           L"S&tealth Mode"
 #define MENU_ABOUT                  L"&About"
 
 
