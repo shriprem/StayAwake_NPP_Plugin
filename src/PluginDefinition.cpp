@@ -40,7 +40,7 @@ void pluginCleanUp(){}
 
 void commandMenuInit() {
    setCommand(MI_STAY_AWAKE_PANEL, MENU_SHOW_PANEL, ToggleStayAwakePanel, NULL, _awakePanel.isVisible());
-   setCommand(MI_STAY_AWAKE_STEALTH, MENU_STEALTH_MODE, StayAwakeStealthMode, NULL, TRUE);
+   setCommand(MI_STAY_AWAKE_STEALTH, MENU_STEALTH_MODE, StayAwakeStealthMode, NULL, true);
    setCommand(MI_ABOUT_DIALOG, MENU_ABOUT, ShowAboutDialog);
 
    StayAwakeStealthMode();
@@ -83,6 +83,8 @@ void RegisterDockPanelIcon() {
 }
 
 void InitStayAwakePanel() {
+   _awakePanel.setParent(nppData._nppHandle);
+
    if (!_awakePanel.isCreated()) {
       _awakePanel.create(&_dockpanelData);
 
@@ -99,13 +101,14 @@ void ToggleStayAwakePanel() {
 }
 
 void ShowStayAwakePanel(bool show) {
-   if (show && !_awakePanel.isVisible()) {
-      _awakePanel.setParent(nppData._nppHandle);
+   if (show && !_awakePanel.isPanelInitialized()) {
       InitStayAwakePanel();
       RegisterDockPanelIcon();
       _awakePanel.initPanel();
+   }
 
-      isStealthMode = TRUE;
+   if (show) {
+      isStealthMode = true;
       Utils::checkMenuItem(MI_STAY_AWAKE_STEALTH, isStealthMode);
    }
 

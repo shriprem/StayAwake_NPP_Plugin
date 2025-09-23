@@ -12,6 +12,7 @@ public:
    void initConfig();
    void initPanel();
 
+   bool isPanelInitialized() { return bPanelInitialized; }
    bool isTimerPaused();
    void initTimer();
    void killTimer();
