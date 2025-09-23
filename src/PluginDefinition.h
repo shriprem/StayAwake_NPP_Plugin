@@ -55,4 +55,3 @@ void StayAwakeStealthMode();
 void ShowAboutDialog();
 
 void RegisterDockPanelIcon();
-void RefreshDarkMode();

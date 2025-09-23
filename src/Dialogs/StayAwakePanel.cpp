@@ -149,14 +149,6 @@ void StayAwakePanel::display(bool toShow) {
    }
 }
 
-void StayAwakePanel::refreshDarkMode() {
-   RegisterDockPanelIcon();
-   redraw();
-
-   if (_aboutDlg.isCreated())
-      _aboutDlg.refreshDarkMode();
-}
-
 void StayAwakePanel::setParent(HWND parent2set) {
    _hParent = parent2set;
 }

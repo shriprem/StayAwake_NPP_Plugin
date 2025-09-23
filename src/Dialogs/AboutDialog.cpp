@@ -12,11 +12,6 @@ void AboutDialog::doDialog(HINSTANCE hInst) {
    SendMessage(_hParent, NPPM_DMMSHOW, 0, (LPARAM)_hSelf);
 }
 
-void AboutDialog::refreshDarkMode() {
-   NppMessage(NPPM_DARKMODESUBCLASSANDTHEME, static_cast<WPARAM>(NppDarkMode::dmfHandleChange), reinterpret_cast<LPARAM>(_hSelf));
-   redraw();
-}
-
 void AboutDialog::localize() {
 #ifdef _WIN64
    wstring buildBit{ L" (64-bit)" };

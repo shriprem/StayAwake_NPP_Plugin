@@ -134,8 +134,3 @@ void StayAwakeStealthMode() {
 void ShowAboutDialog() {
    _awakePanel.showAboutDialog();
 }
-
-void RefreshDarkMode() {
-   if (_awakePanel.isCreated())
-      _awakePanel.refreshDarkMode();
-}

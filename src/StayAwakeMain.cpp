@@ -61,12 +61,9 @@ extern "C" __declspec(dllexport) FuncItem * getFuncsArray(int *nbF)
 
 extern "C" __declspec(dllexport) void beNotified(SCNotification *notifyCode) {
    switch (notifyCode->nmhdr.code) {
-      case NPPN_DARKMODECHANGED:
-         RefreshDarkMode();
-         break;
-
       case NPPN_TOOLBARICONSETCHANGED:
-         RegisterDockPanelIcon();
+         if (_awakePanel.isVisible())
+            RegisterDockPanelIcon();
          break;
 
       case NPPN_SHUTDOWN:
