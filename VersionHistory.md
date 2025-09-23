@@ -1,6 +1,6 @@
 ## Version History
 
-### Version 1.1.0.0 [September 22, 2025]
+### Version 1.1.0.0 [September 23, 2025]
 
 #### Enhancements
 1. StayAwake now offers a choice from **12 keycode simulations** to better serve individual user situations.
