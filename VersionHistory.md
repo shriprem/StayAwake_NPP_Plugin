@@ -11,9 +11,9 @@
 
 #### Fixed Issues
 With plugin panel closed during NPP launch, changing NPP preferences for Dark Mode or Toolbar Icon set will crash Notepad++.
-Issue [#5](issues/5)
+Issue [#5](https://github.com/shriprem/StayAwake_NPP_Plugin/issues/5)
 
-**Release:** [1.1.0.0](releases/tag/v1.1.0.0)
+**Release:** [1.1.0.0](https://github.com/shriprem/StayAwake_NPP_Plugin/releases/tag/v1.1.0.0)
 
 ---
 
