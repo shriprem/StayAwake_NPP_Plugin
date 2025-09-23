@@ -13,6 +13,7 @@ public:
    void initPanel();
 
    bool isPanelInitialized() { return bPanelInitialized; }
+   bool isPanelMounted() { return panelMounted; }
    bool isTimerPaused();
    void initTimer();
    void killTimer();
@@ -23,7 +24,7 @@ public:
    void showAboutDialog();
 
 protected:
-   bool bPanelInitialized{};
+   bool bPanelInitialized{}, panelMounted{};
    UINT_PTR nTimerID{ 42 };
    UINT nAwakeKeyCode{ 0 };
    UINT nTimerSeconds{ 240 };
