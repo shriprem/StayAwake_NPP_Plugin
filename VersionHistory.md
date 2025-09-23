@@ -1,11 +1,19 @@
 ## Version History
 
 ### Version 1.1.0.0 [September 22, 2025]
-* StayAwake now offers a choice from **12 keycode simulations** to better serve individual user situations.
-* Added **Pause/Resume** button to pause or resume the timer-based key simulations.
-* Implemented **Stealth Mode**. The Stealth Mode will allow users to benefit from StayAwake's core utility without requiring to have its plugin panel open in Notepad++. The plugin panel will only be needed to specify preferences for the plugin.
 
-**Release:** [1.1.0.0](https://github.com/shriprem/StayAwake_NPP_Plugin/releases/tag/v1.1.0.0)
+#### Enhancements
+1. StayAwake now offers a choice from **12 keycode simulations** to better serve individual user situations.
+
+2. Added **Pause/Resume** button to pause or resume the timer-based key simulations.
+
+3. Implemented **Stealth Mode**. The Stealth Mode will allow users to benefit from StayAwake's core utility without requiring to have its plugin panel open in Notepad++. The plugin panel will only be needed to specify preferences for the plugin.
+
+#### Fixed Issues
+With plugin panel closed during NPP launch, changing NPP preferences for Dark Mode or Toolbar Icon set will crash Notepad++.
+Issue [#5](issues/5)
+
+**Release:** [1.1.0.0](releases/tag/v1.1.0.0)
 
 ---
 
