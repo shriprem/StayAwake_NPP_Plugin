@@ -16,7 +16,8 @@ If you are using Microsoft Teams, you may have noticed that Teams automatically 
 
 StayAwake does its job by simulating key presses of unused or low side-effect buttons at specified time intervals. This is a safe and non-intrusive way to keep your Microsoft Teams status _Active_.
 
-StayAwake will continue to run in the background even after the plugin panel is closed.
+* StayAwake will continue to run in the background even after its panel is closed.
+* StayAwake will autostart with every Notepad++ session. There is no need to leave the panel open to have StayAwake autostart with Notepad++. For more info on this feature, see: [Stealth Mode](#stealth-mode)
 
 ## Plugin Panel
 ![StayAwake UI](images/StayAwakePanel.png)
@@ -73,7 +74,40 @@ These unassigned keycodes have been obtained from this Microsoft article on [Vir
 Microsoft may start utilizing any of these unassigned codes in the future -- but not all of them in one go. Hence all 10 of the currently unassigned codes have been included in the [StayAwake Key Simulation list](#stayawake--key-simulation-list) so that users can switch to another still available unassigned keycode.
 
 
-### Alternative Tip
+### Stealth Mode
+Beginning with the v1.1.0.0 release, StayAwake will autostart with every Notepad++ session. This means that there is no need to leave the panel open to have StayAwake autostart with Notepad++.
+
+ After its autostart, StayAwake will keep simulating the selected Awake keycode at specified intervals unless it had been paused in a previous Notepad++ session.
+
+ The stealth mode can be turned ON/OFF via the Notepad++ menu option: *Plugins » StayAwake » Stealth Mode*. When stealth mode is active, the *Stealth Mode* menu option will have a checkmark indicator.
+
+ When stealth mode is *NOT* active:
+1. StayAwake will suspend its activity. i.e., StayAwake will stop simulating the Awake keycodes.
+2. As of the v1.1.0.0 release, StayAwake's suspended state will be indicated only by the absence of checkmark in the menu option; it is not being indicated anywhere else on the plugin panel.
+3. StayAwake's suspended state will not carry over to future Notepad++ sessions -- a distinction to note during the choice of using the *Stealth Mode* menu option vs. the [Pause](#pause-button) button on the panel.
+
+#### Optional Tips
+ * You can verify the stealth mode feature in action by *temporarily* setting the StayAwake Key simulation selection to [Volume Up & Down](#volume-up--down) and the [Seconds between Awakes](#seconds-between-awakes-field) to 10 seconds in the StayAwake plugin panel.
+ * You can add the *Stealth Mode* menu option to Notepad++'s right click menu by editing the **contextMenu.xml** file of Notepad++.
+
+   For example, add the following line of text to the **contextMenu.xml** file:
+
+   `<Item PluginEntryName="StayAwake" PluginCommandItemName="Stealth Mode" ItemNameAs="StayAwake Stealth Mode" />`
+
+   At the location indicated in this clip:
+   ![ContextMenuEdit](images/contextMenuEntry.png)
+
+   Save changes to the xml file and restart Notepad++. *StayAwake Stealth Mode* menu option will start displaying in Notepad++'s right click menu, as seen in this clip:
+
+   ![ContextMenuEdit](images/contextMenu.png)
+
+
+## Alternatives
+
+### StayAwake standalone application
+StayAwake is also available as a [standalone application](https://github.com/shriprem/StayAwake). This version can be useful if you are not a Notepad++ user.
+
+### Adobe PDF Full screen hack
 If you are only looking for a way to block screen saver activation and session lockouts, you do not actually need the StayAwake plugin. Instead, you can simply open a PDF document in full screen mode in Adobe Acrobat (Reader | Professional), and leave it open in the background. This will prevent your screen saver from activating, and also prevent your Windows session from locking out.
 
 **Note**: Full screen mode is different than maximized window state. To view a PDF document in full screen mode in Adobe Acrobat (Reader | Professional), either use:
@@ -88,10 +122,8 @@ Within Notepad++, you can install the StayAwake plugin using the Notepad++ Plugi
 
 After installing the StayAwake plugin, click on **Plugins » StayAwake » Show StayAwake Panel** menu option to start the utility.
 
-
-## See Also
-StayAwake is also available as a [standalone application](https://github.com/shriprem/StayAwake). This version can be useful if you are not a Notepad++ user.
-
 <a href='https://ko-fi.com/S6S417WICS' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi5.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+
+
 
 
