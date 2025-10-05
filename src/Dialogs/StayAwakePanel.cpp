@@ -2,7 +2,6 @@
 #include "AboutDialog.h"
 
 extern HINSTANCE _gModule;
-extern StayAwakePanel _awakePanel;
 AboutDialog _aboutDlg;
 
 
@@ -44,6 +43,10 @@ INT_PTR CALLBACK StayAwakePanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM
 
       case IDC_STAYAWAKE_SET_INTERVAL:
          onSetInterval();
+         break;
+
+      case IDC_STAYAWAKE_STEALTH_MODE:
+         StayAwakeStealthMode();
          break;
 
       case IDC_STAYAWAKE_PAUSE_RESUME_BTN:
@@ -109,6 +112,7 @@ void StayAwakePanel::initPanel() {
    initConfig();
 
    hKeyCodes = GetDlgItem(_hSelf, IDC_STAYAWAKE_KEY_LIST);
+   hStealthMode = GetDlgItem(_hSelf, IDC_STAYAWAKE_STEALTH_MODE);
    hPauseResume = GetDlgItem(_hSelf, IDC_STAYAWAKE_PAUSE_RESUME_BTN);
 
    // Init KeyCodes List
@@ -191,6 +195,16 @@ void StayAwakePanel::initTimer() {
 
 void StayAwakePanel::killTimer() {
    KillTimer(_hSelf, nTimerID);
+}
+
+void StayAwakePanel::stealthMode(bool active) {
+   if (active) {
+      if (!isTimerPaused()) initTimer();
+   }
+   else
+      killTimer();
+
+   CheckDlgButton(_hSelf, IDC_STAYAWAKE_STEALTH_MODE, active);
 }
 
 void StayAwakePanel::pauseTimer() {

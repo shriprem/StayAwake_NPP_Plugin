@@ -15,8 +15,7 @@ public:
    bool isPanelInitialized() { return bPanelInitialized; }
    bool isPanelMounted() { return panelMounted; }
    bool isTimerPaused();
-   void initTimer();
-   void killTimer();
+   void stealthMode(bool active);
 
    virtual void display(bool toShow=true);
    void setParent(HWND parent2set);
@@ -30,13 +29,16 @@ protected:
    UINT nTimerSeconds{ 240 };
    TCHAR sIniFilePath[MAX_PATH]{};
 
-   HWND hKeyCodes{}, hPauseResume{};
+   HWND hKeyCodes{}, hStealthMode{}, hPauseResume{};
 
    virtual INT_PTR CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam);
 
    wstring getPreference(const wstring key, const wstring defaultVal) const;
 
+   void initTimer();
    void pauseTimer();
+   void killTimer();
+
    void showPausedInfo(bool both);
    void simulateAwakeKeyPress();
    void onKillfocusInterval();

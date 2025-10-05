@@ -107,28 +107,18 @@ void ShowStayAwakePanel(bool show) {
       _awakePanel.initPanel();
    }
 
-   if (show) {
-      isStealthMode = true;
-      Utils::checkMenuItem(MI_STAY_AWAKE_STEALTH, isStealthMode);
-   }
-
    _awakePanel.display(show);
 }
 
 void StayAwakeStealthMode() {
-   if (isStealthMode) {
-      _awakePanel.killTimer();
-   }
-   else {
+   if (!isStealthMode) {
       InitStayAwakePanel();
       _awakePanel.initConfig();
-
-      if (!_awakePanel.isTimerPaused())
-         _awakePanel.initTimer();
    }
 
    isStealthMode = !isStealthMode;
    Utils::checkMenuItem(MI_STAY_AWAKE_STEALTH, isStealthMode);
+   _awakePanel.stealthMode(isStealthMode);
 }
 
 void ShowAboutDialog() {
