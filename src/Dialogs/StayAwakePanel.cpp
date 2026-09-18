@@ -9,7 +9,9 @@ constexpr auto PREF_INI_FILE = L"StayAwake.ini";
 constexpr auto PREF_DEFAULTS = L"Defaults";
 constexpr auto PREF_AWAKE_KEYCODE = L"AwakeKeyCode";
 constexpr auto PREF_AWAKE_PAUSED = L"AwakePaused";
-constexpr auto PREF_TIMER_INTERVAL = L"TimerIntervalInSeconds";
+constexpr auto PREF_INTERVAL_LEGACY = L"TimerIntervalInSeconds";
+constexpr auto PREF_INTERVAL_MINIMUM = L"MinimumIntervalInSeconds";
+constexpr auto PREF_INTERVAL_MAXIMUM = L"MaximumIntervalInSeconds";
 
 constexpr auto BTN_TEXT_PAUSE = L"&Pause";
 constexpr auto BTN_TEXT_RESUME = L"&Resume";
@@ -19,6 +21,12 @@ constexpr auto VK_UNASSIGNED_10 = 0xE8;
 
 constexpr auto MIN_PERIOD{ 10 };
 constexpr auto MAX_PERIOD{ 9990 };
+constexpr auto DEF_PERIOD{ 240 };
+
+const wstring MIN_MAX_PERIOD = to_wstring(MIN_PERIOD) + L" and " + to_wstring(MAX_PERIOD);
+const wstring INTERVAL_TOOLTIP = L"Number between " + MIN_MAX_PERIOD;
+const wstring INTERVAL_WARNING = L"Please enter a value between " + MIN_MAX_PERIOD;
+const LPCWSTR INTERVAL_WARN_TITLE = L"Timer Interval in seconds";
 
 
 INT_PTR CALLBACK StayAwakePanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam) {
@@ -36,9 +44,14 @@ INT_PTR CALLBACK StayAwakePanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM
          }
          break;
 
-      case IDC_STAYAWAKE_INTERVAL:
+      case IDC_STAYAWAKE_INTERVAL_MIN:
          if (HIWORD(wParam) == EN_KILLFOCUS)
-            onKillfocusInterval();
+            onKillFocusIntervalMin();
+         break;
+
+      case IDC_STAYAWAKE_INTERVAL_MAX:
+         if (HIWORD(wParam) == EN_KILLFOCUS)
+            onKillFocusIntervalMax();
          break;
 
       case IDC_STAYAWAKE_SET_INTERVAL:
@@ -51,7 +64,7 @@ INT_PTR CALLBACK StayAwakePanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM
 
       case IDC_STAYAWAKE_PAUSE_RESUME_BTN:
          if (isTimerPaused())
-            initTimer();
+            initAwakes();
          else
             pauseTimer();
 
@@ -101,11 +114,28 @@ void StayAwakePanel::initConfig() {
    NppMessage(NPPM_GETPLUGINSCONFIGDIR, MAX_PATH, (LPARAM)sIniFilePath);
    PathAppend(sIniFilePath, PREF_INI_FILE);
 
-   nAwakeKeyCode = GetPrivateProfileInt(PREF_DEFAULTS, PREF_AWAKE_KEYCODE, nTimerSeconds, sIniFilePath);
+   // Initialize RNG
+   std::srand(static_cast<unsigned>(time(nullptr)));
+
+   nAwakeKeyCode = GetPrivateProfileInt(PREF_DEFAULTS, PREF_AWAKE_KEYCODE, nAwakeKeyCode, sIniFilePath);
    nAwakeKeyCode %= 12;
 
-   nTimerSeconds = GetPrivateProfileInt(PREF_DEFAULTS, PREF_TIMER_INTERVAL, nTimerSeconds, sIniFilePath);
-   nTimerSeconds = (nTimerSeconds < MIN_PERIOD || nTimerSeconds > MAX_PERIOD) ? 240 : nTimerSeconds; // default to 4 minutes if out of range
+   int nIntervalLegacy{}, nIntervalMin{}, nIntervalMax{};
+
+   nIntervalLegacy = GetPrivateProfileInt(PREF_DEFAULTS, PREF_INTERVAL_LEGACY, DEF_PERIOD, sIniFilePath);
+   if (nIntervalLegacy < MIN_PERIOD || nIntervalLegacy > MAX_PERIOD)
+      nIntervalLegacy = DEF_PERIOD;
+
+   nIntervalMin = GetPrivateProfileInt(PREF_DEFAULTS, PREF_INTERVAL_MINIMUM, nIntervalLegacy, sIniFilePath);
+   if (nIntervalMin < MIN_PERIOD || nIntervalMin > MAX_PERIOD)
+      nIntervalMin = DEF_PERIOD;
+
+   nIntervalMax = GetPrivateProfileInt(PREF_DEFAULTS, PREF_INTERVAL_MAXIMUM, nIntervalLegacy, sIniFilePath);
+   if (nIntervalMax < MIN_PERIOD || nIntervalMax > MAX_PERIOD)
+      nIntervalMax = DEF_PERIOD;
+
+   nIntervalMinSeconds = (nIntervalMin <= nIntervalMax) ? nIntervalMin : nIntervalMax;
+   nIntervalMaxSeconds = (nIntervalMin >= nIntervalMax) ? nIntervalMin : nIntervalMax;
 }
 
 void StayAwakePanel::initPanel() {
@@ -126,10 +156,11 @@ void StayAwakePanel::initPanel() {
    SendMessage(hKeyCodes, CB_SETCURSEL, nAwakeKeyCode, NULL);
 
    // Init Timer Seconds
-   SetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL, nTimerSeconds, FALSE);
+   SetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL_MIN, nIntervalMinSeconds, FALSE);
+   SetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL_MAX, nIntervalMaxSeconds, FALSE);
 
-   Utils::addTooltip(_hSelf, IDC_STAYAWAKE_INTERVAL, L"",
-      wstring{ L"Number between " } + to_wstring(MIN_PERIOD) + L" and " + to_wstring(MAX_PERIOD), 3, TRUE);
+   Utils::addTooltip(_hSelf, IDC_STAYAWAKE_INTERVAL_MIN, L"", INTERVAL_TOOLTIP, 3, TRUE);
+   Utils::addTooltip(_hSelf, IDC_STAYAWAKE_INTERVAL_MAX, L"", INTERVAL_TOOLTIP, 3, TRUE);
 
    SetWindowText(hPauseResume, isTimerPaused() ? BTN_TEXT_RESUME :BTN_TEXT_PAUSE);
 
@@ -146,8 +177,8 @@ void StayAwakePanel::display(bool toShow) {
    panelMounted = toShow;
 
    if (toShow) {
-      if (!isTimerPaused()) initTimer();
-      SetFocus(GetDlgItem(_hSelf, IDC_STAYAWAKE_INTERVAL));
+      if (!isTimerPaused()) initAwakes();
+      SetFocus(GetDlgItem(_hSelf, IDC_STAYAWAKE_INTERVAL_MIN));
    }
    else {
       if (_aboutDlg.isCreated() && _aboutDlg.isVisible())
@@ -183,9 +214,8 @@ void StayAwakePanel::showPausedInfo(bool both) {
    SetDlgItemText(_hSelf, IDC_STAYAWAKE_NEXT_TOGGLE, L"Next StayAwake event:         PAUSED");
 }
 
-void StayAwakePanel::initTimer() {
+void StayAwakePanel::initAwakes() {
    simulateAwakeKeyPress();
-   nTimerID = SetTimer(_hSelf, nTimerID, nTimerSeconds * 1000, NULL);
 
    if (bPanelInitialized)
       SetWindowText(hPauseResume, BTN_TEXT_PAUSE);
@@ -199,7 +229,7 @@ void StayAwakePanel::killTimer() {
 
 void StayAwakePanel::stealthMode(bool active) {
    if (active) {
-      if (!isTimerPaused()) initTimer();
+      if (!isTimerPaused()) initAwakes();
    }
    else
       killTimer();
@@ -261,6 +291,12 @@ void StayAwakePanel::simulateAwakeKeyPress() {
       GetLocalTime(&lastTime);
       SetDlgItemText(_hSelf, IDC_STAYAWAKE_LAST_TOGGLE, Utils::formatSystemTime(lastTime, L"Last StayAwake event").c_str());
 
+      UINT nTimerSeconds{ nIntervalMinSeconds };
+      if (nIntervalMinSeconds != nIntervalMaxSeconds)
+         nTimerSeconds += rand() % (abs(static_cast<int>(nIntervalMaxSeconds - nIntervalMinSeconds)) + 1);
+
+      nTimerID = SetTimer(_hSelf, nTimerID, nTimerSeconds * 1000, NULL);
+
       SYSTEMTIME nextTime{};
       GetSystemTime(&nextTime);
       Utils::addSecondsToTime(nextTime, nTimerSeconds);
@@ -268,26 +304,52 @@ void StayAwakePanel::simulateAwakeKeyPress() {
    }
 }
 
-void StayAwakePanel::onKillfocusInterval() {
+void StayAwakePanel::onKillFocusIntervalMin() {
    if (!bPanelInitialized) return;
 
-   UINT nInterval{ GetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL, nullptr, FALSE) };
+   UINT nInterval{ GetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL_MIN, nullptr, FALSE) };
 
    if (nInterval < MIN_PERIOD || nInterval > MAX_PERIOD)
    {
-      Utils::showEditBalloonTip(GetDlgItem(_hSelf, IDC_STAYAWAKE_INTERVAL), L"Timer Interval in seconds",
-         (wstring{ L"Please enter a value between " } + to_wstring(MIN_PERIOD) + L" and " + to_wstring(MAX_PERIOD)).c_str());
-      SetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL, nTimerSeconds, FALSE);
+      Utils::showEditBalloonTip(GetDlgItem(_hSelf, IDC_STAYAWAKE_INTERVAL_MIN), INTERVAL_WARN_TITLE, INTERVAL_WARNING.c_str());
+      SetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL_MIN, nIntervalMinSeconds, FALSE);
       return;
    }
 
-   nTimerSeconds = nInterval;
+   nIntervalMinSeconds = nInterval;
+}
+
+void StayAwakePanel::onKillFocusIntervalMax() {
+   if (!bPanelInitialized) return;
+
+   UINT nInterval{ GetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL_MAX, nullptr, FALSE) };
+
+   if (nInterval < MIN_PERIOD || nInterval > MAX_PERIOD)
+   {
+      Utils::showEditBalloonTip(GetDlgItem(_hSelf, IDC_STAYAWAKE_INTERVAL_MAX), INTERVAL_WARN_TITLE, INTERVAL_WARNING.c_str());
+      SetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL_MAX, nIntervalMaxSeconds, FALSE);
+      return;
+   }
+
+   nIntervalMaxSeconds = nInterval;
 }
 
 void StayAwakePanel::onSetInterval() {
-   onKillfocusInterval();
-   WritePrivateProfileString(PREF_DEFAULTS, PREF_TIMER_INTERVAL, to_wstring(nTimerSeconds).c_str(), sIniFilePath);
-   initTimer();
+   onKillFocusIntervalMin();
+   onKillFocusIntervalMax();
+
+   if (nIntervalMinSeconds > nIntervalMaxSeconds) {
+      UINT nTemp{ nIntervalMinSeconds };
+      nIntervalMinSeconds = nIntervalMaxSeconds;
+      nIntervalMaxSeconds = nTemp;
+
+      SetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL_MIN, nIntervalMinSeconds, FALSE);
+      SetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL_MAX, nIntervalMaxSeconds, FALSE);
+   }
+
+   WritePrivateProfileString(PREF_DEFAULTS, PREF_INTERVAL_MINIMUM, to_wstring(nIntervalMinSeconds).c_str(), sIniFilePath);
+   WritePrivateProfileString(PREF_DEFAULTS, PREF_INTERVAL_MAXIMUM, to_wstring(nIntervalMaxSeconds).c_str(), sIniFilePath);
+   initAwakes();
 }
 
 void StayAwakePanel::onPanelResize(LPARAM lParam) {

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <ctime>
 #include "../Utils.h"
 #include "../NPP/DockingDlgInterface.h"
 
@@ -26,7 +27,8 @@ protected:
    bool bPanelInitialized{}, panelMounted{};
    UINT_PTR nTimerID{ 42 };
    UINT nAwakeKeyCode{ 0 };
-   UINT nTimerSeconds{ 240 };
+   UINT nIntervalMinSeconds{};
+   UINT nIntervalMaxSeconds{};
    TCHAR sIniFilePath[MAX_PATH]{};
 
    HWND hKeyCodes{}, hStealthMode{}, hPauseResume{};
@@ -35,13 +37,14 @@ protected:
 
    wstring getPreference(const wstring key, const wstring defaultVal) const;
 
-   void initTimer();
+   void initAwakes();
    void pauseTimer();
    void killTimer();
 
    void showPausedInfo(bool both);
    void simulateAwakeKeyPress();
-   void onKillfocusInterval();
+   void onKillFocusIntervalMin();
+   void onKillFocusIntervalMax();
    void onSetInterval();
 
    void onPanelResize(LPARAM lParam);
