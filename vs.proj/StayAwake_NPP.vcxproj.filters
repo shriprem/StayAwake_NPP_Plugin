@@ -19,6 +19,9 @@
     <ClCompile Include="..\src\Utils.cpp">
       <Filter>Base</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Dialogs\SelectKeyCodes.cpp">
+      <Filter>Dialogs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\NPP\Docking.h">
@@ -71,6 +74,9 @@
     </ClInclude>
     <ClInclude Include="..\src\Resources\control_ids.h">
       <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Dialogs\SelectKeyCodes.h">
+      <Filter>Dialogs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

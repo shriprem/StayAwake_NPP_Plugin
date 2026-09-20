@@ -1,32 +1,10 @@
 #include "StayAwakePanel.h"
+#include "SelectKeyCodes.h"
 #include "AboutDialog.h"
 
 extern HINSTANCE _gModule;
+SelectKeyCodes _selectKeyCodes;
 AboutDialog _aboutDlg;
-
-
-constexpr auto PREF_INI_FILE = L"StayAwake.ini";
-constexpr auto PREF_DEFAULTS = L"Defaults";
-constexpr auto PREF_AWAKE_KEYCODE = L"AwakeKeyCode";
-constexpr auto PREF_AWAKE_PAUSED = L"AwakePaused";
-constexpr auto PREF_INTERVAL_LEGACY = L"TimerIntervalInSeconds";
-constexpr auto PREF_INTERVAL_MINIMUM = L"MinimumIntervalInSeconds";
-constexpr auto PREF_INTERVAL_MAXIMUM = L"MaximumIntervalInSeconds";
-
-constexpr auto BTN_TEXT_PAUSE = L"&Pause";
-constexpr auto BTN_TEXT_RESUME = L"&Resume";
-
-constexpr auto VK_UNASSIGNED_01 = 0x97;
-constexpr auto VK_UNASSIGNED_10 = 0xE8;
-
-constexpr auto MIN_PERIOD{ 10 };
-constexpr auto MAX_PERIOD{ 9990 };
-constexpr auto DEF_PERIOD{ 240 };
-
-const wstring MIN_MAX_PERIOD = to_wstring(MIN_PERIOD) + L" and " + to_wstring(MAX_PERIOD);
-const wstring INTERVAL_TOOLTIP = L"Number between " + MIN_MAX_PERIOD;
-const wstring INTERVAL_WARNING = L"Please enter a value between " + MIN_MAX_PERIOD;
-const LPCWSTR INTERVAL_WARN_TITLE = L"Timer Interval in seconds";
 
 
 INT_PTR CALLBACK StayAwakePanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam) {
@@ -34,14 +12,8 @@ INT_PTR CALLBACK StayAwakePanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM
    case WM_COMMAND:
       switch LOWORD(wParam) {
 
-      case IDC_STAYAWAKE_KEY_LIST:
-         switch HIWORD(wParam) {
-         case CBN_SELCHANGE:
-            nAwakeKeyCode = static_cast<int>(SendMessage(hKeyCodes, CB_GETCURSEL, 0, 0));
-            nAwakeKeyCode %= 12;
-            WritePrivateProfileString(PREF_DEFAULTS, PREF_AWAKE_KEYCODE, to_wstring(nAwakeKeyCode).c_str(), sIniFilePath);
-            break;
-         }
+      case IDC_STAYAWAKE_KEYS_ROSTER_BTN:
+         showSelectKeyCodesDialog();
          break;
 
       case IDC_STAYAWAKE_INTERVAL_MIN:
@@ -54,7 +26,7 @@ INT_PTR CALLBACK StayAwakePanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM
             onKillFocusIntervalMax();
          break;
 
-      case IDC_STAYAWAKE_SET_INTERVAL:
+      case IDC_STAYAWAKE_SET_INTERVAL_BTN:
          onSetInterval();
          break;
 
@@ -117,9 +89,6 @@ void StayAwakePanel::initConfig() {
    // Initialize RNG
    std::srand(static_cast<unsigned>(time(nullptr)));
 
-   nAwakeKeyCode = GetPrivateProfileInt(PREF_DEFAULTS, PREF_AWAKE_KEYCODE, nAwakeKeyCode, sIniFilePath);
-   nAwakeKeyCode %= 12;
-
    int nIntervalLegacy{}, nIntervalMin{}, nIntervalMax{};
 
    nIntervalLegacy = GetPrivateProfileInt(PREF_DEFAULTS, PREF_INTERVAL_LEGACY, DEF_PERIOD, sIniFilePath);
@@ -141,19 +110,8 @@ void StayAwakePanel::initConfig() {
 void StayAwakePanel::initPanel() {
    initConfig();
 
-   hKeyCodes = GetDlgItem(_hSelf, IDC_STAYAWAKE_KEY_LIST);
    hStealthMode = GetDlgItem(_hSelf, IDC_STAYAWAKE_STEALTH_MODE);
    hPauseResume = GetDlgItem(_hSelf, IDC_STAYAWAKE_PAUSE_RESUME_BTN);
-
-   // Init KeyCodes List
-   SendMessage(hKeyCodes, CB_ADDSTRING, NULL, (LPARAM)L"Scroll Lock cycling");
-   SendMessage(hKeyCodes, CB_ADDSTRING, NULL, (LPARAM)L"Volume Down & Up");
-
-   for (int i{ 1 }; i <= 10; i++) {
-      SendMessage(hKeyCodes, CB_ADDSTRING, NULL, (LPARAM)(L"Unassigned Key #" + to_wstring(i)).c_str());
-   }
-
-   SendMessage(hKeyCodes, CB_SETCURSEL, nAwakeKeyCode, NULL);
 
    // Init Timer Seconds
    SetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL_MIN, nIntervalMinSeconds, FALSE);
@@ -169,6 +127,48 @@ void StayAwakePanel::initPanel() {
 
    if (isTimerPaused()) showPausedInfo(TRUE);
    bPanelInitialized = true;
+}
+
+wstring StayAwakePanel::getSelectedKeyCodes() {
+   const int bufSize{ LEN_ROSTER_KEYCODES + 1 };
+   wchar_t sBuf[bufSize]{};
+
+   GetPrivateProfileString(PREF_DEFAULTS, PREF_SELECTED_KEYCODES, L"N/A", sBuf, bufSize, sIniFilePath);
+
+   wstring sKeyCodes{ sBuf };
+
+   if (sKeyCodes == L"N/A") {
+      UINT nLegacyKeyCode = GetPrivateProfileInt(PREF_DEFAULTS, PREF_LEGACY_KEYCODE, 99, sIniFilePath);
+
+      if (nLegacyKeyCode == 99)
+         sKeyCodes = DEF_SELECTED_KEYCODES;
+      else
+      {
+         sKeyCodes = wstring(LEN_ROSTER_KEYCODES, L'0');
+         sKeyCodes.replace(nLegacyKeyCode % LEN_ROSTER_KEYCODES, 1, L"1");
+      }
+
+      WritePrivateProfileString(PREF_DEFAULTS, PREF_LEGACY_KEYCODE, nullptr, sIniFilePath);
+      saveSelectedKeyCodes(sKeyCodes);
+   }
+   else if (!checkSelectedKeyCodes(sKeyCodes))
+   {
+      sKeyCodes = DEF_SELECTED_KEYCODES;
+      saveSelectedKeyCodes(sKeyCodes);
+   }
+
+   return sKeyCodes;
+}
+
+bool StayAwakePanel::checkSelectedKeyCodes(wstring sKeyCodes) {
+   return (sKeyCodes.length() == LEN_ROSTER_KEYCODES &&
+      sKeyCodes != wstring(LEN_ROSTER_KEYCODES, L'0') &&
+      sKeyCodes.find_first_not_of(L"01") == std::string::npos);
+}
+
+bool StayAwakePanel::saveSelectedKeyCodes(wstring sKeyCodes) {
+   return checkSelectedKeyCodes(sKeyCodes) &&
+      WritePrivateProfileString(PREF_DEFAULTS, PREF_SELECTED_KEYCODES, sKeyCodes.c_str(), sIniFilePath);
 }
 
 void StayAwakePanel::display(bool toShow) {
@@ -209,12 +209,24 @@ bool StayAwakePanel::isTimerPaused() {
 
 void StayAwakePanel::showPausedInfo(bool both) {
    if (both)
-      SetDlgItemText(_hSelf, IDC_STAYAWAKE_LAST_TOGGLE, L"Last StayAwake event:         PAUSED");
+      SetDlgItemText(_hSelf, IDC_STAYAWAKE_LAST_EVENT, L"Last StayAwake event:         PAUSED");
 
-   SetDlgItemText(_hSelf, IDC_STAYAWAKE_NEXT_TOGGLE, L"Next StayAwake event:         PAUSED");
+   SetDlgItemText(_hSelf, IDC_STAYAWAKE_NEXT_EVENT, L"Next StayAwake event:         PAUSED");
+}
+
+void StayAwakePanel::initRosterKeyCodes() {
+   wstring sSelectedKeyCodes{ getSelectedKeyCodes() };
+
+   nRosterLength = 0;
+
+   for (int i{}; i < LEN_ROSTER_KEYCODES; i++) {
+      if (sSelectedKeyCodes.at(i) == L'1')
+         nRosterKeyCodes[nRosterLength++] = i;
+   }
 }
 
 void StayAwakePanel::initAwakes() {
+   initRosterKeyCodes();
    simulateAwakeKeyPress();
 
    if (bPanelInitialized)
@@ -246,8 +258,14 @@ void StayAwakePanel::pauseTimer() {
 }
 
 void StayAwakePanel::simulateAwakeKeyPress() {
+   if (!nRosterLength) initRosterKeyCodes();
+
+   UINT nAwakeKeyCode{ nRosterKeyCodes[rand() % nRosterLength] };
+   wstring sAwakeKeyCode{};
+
    switch (nAwakeKeyCode) {
    case 1:
+      sAwakeKeyCode = L"Volume Down && Up";
       keybd_event(VK_VOLUME_DOWN, 0, KEYEVENTF_EXTENDEDKEY | 0, 0);
       keybd_event(VK_VOLUME_DOWN, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
       Sleep(10);
@@ -265,6 +283,7 @@ void StayAwakePanel::simulateAwakeKeyPress() {
    case 9:
    case 10:
    {
+      sAwakeKeyCode = L"Unassigned Key #" + to_wstring(nAwakeKeyCode - 1);
       BYTE keycode{ static_cast<BYTE>(VK_UNASSIGNED_01 + nAwakeKeyCode - 2) };
       keybd_event(keycode, 0, KEYEVENTF_EXTENDEDKEY | 0, 0);
       keybd_event(keycode, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
@@ -272,11 +291,13 @@ void StayAwakePanel::simulateAwakeKeyPress() {
    }
 
    case 11:
+      sAwakeKeyCode = L"Unassigned Key #10";
       keybd_event(VK_UNASSIGNED_10, 0, KEYEVENTF_EXTENDEDKEY | 0, 0);
       keybd_event(VK_UNASSIGNED_10, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
       break;
 
    default:
+      sAwakeKeyCode = L"Scroll Lock cycling";
       keybd_event(VK_SCROLL, 0, KEYEVENTF_EXTENDEDKEY | 0, 0);
       keybd_event(VK_SCROLL, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
       Sleep(10);
@@ -289,7 +310,8 @@ void StayAwakePanel::simulateAwakeKeyPress() {
    if (bPanelInitialized) {
       SYSTEMTIME lastTime{};
       GetLocalTime(&lastTime);
-      SetDlgItemText(_hSelf, IDC_STAYAWAKE_LAST_TOGGLE, Utils::formatSystemTime(lastTime, L"Last StayAwake event").c_str());
+      SetDlgItemText(_hSelf, IDC_STAYAWAKE_LAST_EVENT, Utils::formatSystemTime(lastTime, L"Last StayAwake event").c_str());
+      SetDlgItemText(_hSelf, IDC_STAYAWAKE_LAST_KEYCODE, (L"[" + sAwakeKeyCode + L"]").c_str());
 
       UINT nTimerSeconds{ nIntervalMinSeconds };
       if (nIntervalMinSeconds != nIntervalMaxSeconds)
@@ -300,7 +322,14 @@ void StayAwakePanel::simulateAwakeKeyPress() {
       SYSTEMTIME nextTime{};
       GetSystemTime(&nextTime);
       Utils::addSecondsToTime(nextTime, nTimerSeconds);
-      SetDlgItemText(_hSelf, IDC_STAYAWAKE_NEXT_TOGGLE, Utils::formatSystemTime(nextTime, L"Next StayAwake event").c_str());
+      SetDlgItemText(_hSelf, IDC_STAYAWAKE_NEXT_EVENT, Utils::formatSystemTime(nextTime, L"Next StayAwake event").c_str());
+   }
+}
+
+void StayAwakePanel::showSelectKeyCodesDialog() {
+   if (_selectKeyCodes.doDialog((HINSTANCE)_gModule) == IDOK) {
+      initRosterKeyCodes();
+      if (!isTimerPaused()) simulateAwakeKeyPress();
    }
 }
 
