@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Dialogs\AboutDialog.h" />
+    <ClInclude Include="..\src\Dialogs\SelectKeyCodes.h" />
     <ClInclude Include="..\src\Dialogs\StayAwakePanel.h" />
     <ClInclude Include="..\src\NPP\Docking.h" />
     <ClInclude Include="..\src\NPP\DockingDlgInterface.h" />
@@ -47,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Dialogs\AboutDialog.cpp" />
+    <ClCompile Include="..\src\Dialogs\SelectKeyCodes.cpp" />
     <ClCompile Include="..\src\Dialogs\StayAwakePanel.cpp" />
     <ClCompile Include="..\src\NPP\StaticDialog.cpp" />
     <ClCompile Include="..\src\StayAwakeMain.cpp" />
