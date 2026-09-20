@@ -1,15 +1,14 @@
 #include "AboutDialog.h"
 
 void AboutDialog::doDialog(HINSTANCE hInst) {
-   if (!isCreated()) {
-      Window::init(hInst, nppData._nppHandle);
-      create(IDD_ABOUT_DIALOG);
-   }
+   Window::init(hInst, nppData._nppHandle);
 
-   localize();
-   goToCenter();
+   // Blocks until EndDialog() is called from run_dlgProc.
+   DialogBoxParam(_hInst, MAKEINTRESOURCE(IDD_ABOUT_DIALOG), _hParent, dlgProc, reinterpret_cast<LPARAM>(this));
 
-   SendMessage(_hParent, NPPM_DMMSHOW, 0, (LPARAM)_hSelf);
+   // The window has been destroyed by now. Clear the stale handle so
+   // isCreated() is false and ~StaticDialog() doesn't try to destroy it again.
+   _hSelf = NULL;
 }
 
 void AboutDialog::localize() {
@@ -37,13 +36,15 @@ INT_PTR CALLBACK AboutDialog::run_dlgProc(UINT message, WPARAM wParam, LPARAM lP
    switch (message) {
    case WM_INITDIALOG:
       NppMessage(NPPM_DARKMODESUBCLASSANDTHEME, static_cast<WPARAM>(NppDarkMode::dmfInit), reinterpret_cast<LPARAM>(_hSelf));
+      localize();
+      goToCenter();
       break;
 
    case WM_COMMAND:
       switch LOWORD(wParam) {
       case IDCANCEL:
       case IDOK:
-         display(FALSE);
+         EndDialog(_hSelf, LOWORD(wParam));
          return TRUE;
       }
       break;
