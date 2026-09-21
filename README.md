@@ -38,6 +38,9 @@ After every Awake event, a random number of seconds (between the specified minim
 
 The clock times of the last and next Awake events will be displayed and continually refreshed on the StayAwake window. The randomly picked key code used for the last Awake will also be displayed below the last Awake time.
 
+#### Stealth Mode checkbox
+The stealth mode can be turned ON/OFF either with this checkbox or via the Notepad++ menu option: *Plugins » StayAwake » Stealth Mode*. When stealth mode is active, the *Stealth Mode* menu option will have a checkmark indicator. See the [Stealth Mode](#stealth-mode) section below for more info.
+
 #### Pause button
 Click this button to pause StayAwake Key simulations.
 
@@ -84,7 +87,7 @@ Beginning with the v1.1.0.0 release, StayAwake will autostart with every Notepad
 
  After its autostart, StayAwake will keep simulating the selected Awake keycode at specified intervals unless it had been paused in a previous Notepad++ session.
 
- The stealth mode can be turned ON/OFF via the Notepad++ menu option: *Plugins » StayAwake » Stealth Mode*. When stealth mode is active, the *Stealth Mode* menu option will have a checkmark indicator.
+ The stealth mode can be turned ON/OFF either with the [Stealth Mode](#stealth-mode-checkbox) checkbox or via the Notepad++ menu option: *Plugins » StayAwake » Stealth Mode*. When stealth mode is active, the *Stealth Mode* menu option will have a checkmark indicator.
 
  When stealth mode is *NOT* active:
 1. StayAwake will suspend its activity. i.e., StayAwake will stop simulating the Awake keycodes.
