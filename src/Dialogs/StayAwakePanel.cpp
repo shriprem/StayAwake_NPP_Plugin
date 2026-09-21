@@ -307,17 +307,17 @@ void StayAwakePanel::simulateAwakeKeyPress() {
 
    }
 
+   UINT nTimerSeconds{ nIntervalMinSeconds };
+   if (nIntervalMinSeconds != nIntervalMaxSeconds)
+      nTimerSeconds += rand() % (abs(static_cast<int>(nIntervalMaxSeconds - nIntervalMinSeconds)) + 1);
+
+   nTimerID = SetTimer(_hSelf, nTimerID, nTimerSeconds * 1000, NULL);
+
    if (bPanelInitialized) {
       SYSTEMTIME lastTime{};
       GetLocalTime(&lastTime);
       SetDlgItemText(_hSelf, IDC_STAYAWAKE_LAST_EVENT, Utils::formatSystemTime(lastTime, L"Last StayAwake event").c_str());
       SetDlgItemText(_hSelf, IDC_STAYAWAKE_LAST_KEYCODE, (L"[" + sAwakeKeyCode + L"]").c_str());
-
-      UINT nTimerSeconds{ nIntervalMinSeconds };
-      if (nIntervalMinSeconds != nIntervalMaxSeconds)
-         nTimerSeconds += rand() % (abs(static_cast<int>(nIntervalMaxSeconds - nIntervalMinSeconds)) + 1);
-
-      nTimerID = SetTimer(_hSelf, nTimerID, nTimerSeconds * 1000, NULL);
 
       SYSTEMTIME nextTime{};
       GetSystemTime(&nextTime);
