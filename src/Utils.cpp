@@ -4,7 +4,7 @@ extern HINSTANCE _gModule;
 extern FuncItem pluginMenuItems[MI_COUNT];
 
 void Utils::addSecondsToTime(SYSTEMTIME& st, int seconds) {
-   FILETIME ft{}, ftLoc{};
+   FILETIME ft{};
    SystemTimeToFileTime(&st, &ft);
 
    ULARGE_INTEGER uli{};
@@ -17,8 +17,9 @@ void Utils::addSecondsToTime(SYSTEMTIME& st, int seconds) {
    ft.dwLowDateTime = uli.LowPart;
    ft.dwHighDateTime = uli.HighPart;
 
-   FileTimeToLocalFileTime(&ft, &ftLoc);
-   FileTimeToSystemTime(&ftLoc, &st);
+   SYSTEMTIME utc{};
+   FileTimeToSystemTime(&ft, &utc);
+   SystemTimeToTzSpecificLocalTime(nullptr, &utc, &st);   // nullptr = current time zone
 }
 
 wstring Utils::formatSystemTime(SYSTEMTIME& st, wstring prefix) {
