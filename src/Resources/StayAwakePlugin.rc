@@ -17,8 +17,8 @@
 
 #include <windows.h>
 
-#define VERSION_VALUE "1.1.0.0"
-#define VERSION_DIGITALVALUE 1,1,0,0
+#define VERSION_VALUE "1.2.0.0"
+#define VERSION_DIGITALVALUE 1,2,0,0
 
 VS_VERSION_INFO VERSIONINFO
 FILEVERSION VERSION_DIGITALVALUE
@@ -41,7 +41,7 @@ BEGIN
          VALUE "FileDescription", "StayAwake plugin for Notepad++"
          VALUE "FileVersion", VERSION_VALUE
          VALUE "InternalName", "StayAwake_NPP.dll"
-         VALUE "LegalCopyright", "Copyright (C) 2025 by Shridhar Kumar"
+         VALUE "LegalCopyright", "Copyright (C) 2026 by Shridhar Kumar"
          VALUE "OriginalFilename", "StayAwake_NPP.dll"
          VALUE "ProductName", "StayAwake_NPP"
          VALUE "ProductVersion", VERSION_VALUE
