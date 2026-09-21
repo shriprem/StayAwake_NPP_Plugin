@@ -180,10 +180,6 @@ void StayAwakePanel::display(bool toShow) {
       if (!isTimerPaused()) initAwakes();
       SetFocus(GetDlgItem(_hSelf, IDC_STAYAWAKE_INTERVAL_MIN));
    }
-   else {
-      if (_aboutDlg.isCreated() && _aboutDlg.isVisible())
-         _aboutDlg.display(FALSE);
-   }
 }
 
 void StayAwakePanel::setParent(HWND parent2set) {

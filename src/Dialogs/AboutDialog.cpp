@@ -53,8 +53,8 @@ INT_PTR CALLBACK AboutDialog::run_dlgProc(UINT message, WPARAM wParam, LPARAM lP
       switch (((LPNMHDR)lParam)->code) {
       case NM_CLICK:
       case NM_RETURN:
-         ShellExecute(NULL, L"open", getVersionInfo(L"CompanyName").c_str(), NULL, NULL, SW_SHOW);
-         display(FALSE);
+         ShellExecute(_hSelf, L"open", getVersionInfo(L"CompanyName").c_str(), NULL, NULL, SW_SHOW);
+         EndDialog(_hSelf, IDOK);
          return TRUE;
       }
       break;
