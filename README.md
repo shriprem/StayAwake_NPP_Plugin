@@ -8,7 +8,7 @@
 ![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/shriprem/StayAwake_NPP_Plugin/CI_build.yml)
 ![GitHub issues](https://img.shields.io/github/issues/shriprem/StayAwake_NPP_Plugin)
 
-[Current Version: 1.1.0.0](https://github.com/shriprem/StayAwake_NPP_Plugin/blob/main/VersionHistory.md)
+[Current Version: 1.2.0.0](https://github.com/shriprem/StayAwake_NPP_Plugin/blob/main/VersionHistory.md)
 
 StayAwake is a simple, lightweight plugin for Notepad++ that enables you to maintain an _Active_ status on Microsoft Teams (and perhaps other messaging applications such as Slack and Zoom). StayAwake also prevents screen saver activation, screen blanking, and Windows session lockouts.
 
@@ -22,16 +22,21 @@ StayAwake does its job by simulating key presses of unused or low side-effect bu
 ## Plugin Panel
 ![StayAwake UI](images/StayAwakePanel.png)
 
-#### StayAwake Key simulation list
-For most users, the default choice of *Scroll Lock cycling* will work just fine. See the [Key Simulation Options](#key-simulation-options) section below for more info.
+#### Select multiple Key Codes for random simulation
+StayAwake can randomly pick any of the 12 key codes during each simulation. Users can specify _at least_ one OR a select few OR all of the 12 key codes to be included in the simulation roster. See the [Select multiple Key Codes](#select-multiple-key-codes) section below for more info.
 
-#### Seconds between Awakes field
-This field allows you to specify the interval between key simulations. The initial default value for this is 240 seconds (_i.e._, 4 minutes). However, you can change this to any value between 10 and 9990 seconds. Your new value will be saved and used the next time you run the plugin.
+#### Minimum Awake Seconds
+This field allows you to specify the minimum interval between key simulations. The initial default value for this is 240 seconds (_i.e._, 4 minutes). However, you can change this to any value between 10 and 9990 seconds. Your new value will be saved and used the next time you run StayAwake.
+
+#### Maximum Awake Seconds
+This field allows you to specify the maximum interval between key simulations. The initial default value for this is 240 seconds (_i.e._, 4 minutes). However, you can change this to any value between 10 and 9990 seconds. Your new value will be saved and used the next time you run StayAwake.
 
 #### Set Timer button
-After changing the value for *Seconds between Awakes*, click this button to apply the new setting. Clicking this button will also immediately run a StayAwake Key simulation.
+After changing the value for either *Minimum Awake Seconds* or *Maximum Awake Seconds*, click this button to apply the new setting. Clicking this button will also immediately invoke an Awake event.
 
-The clock times of when the StayAwake event was last run, and when it will do so next are displayed and continually refreshed on the plugin panel.
+After every Awake event, a random number of seconds (between the specified minimum and maximum seconds) will be picked to run the next Awake event.
+
+The clock times of the last and next Awake events will be displayed and continually refreshed on the StayAwake window. The randomly picked key code used for the last Awake will also be displayed below the last Awake time.
 
 #### Pause button
 Click this button to pause StayAwake Key simulations.
@@ -49,15 +54,15 @@ As seen in the clip above, clicking the *Pause* button will also have these effe
 #### Close button
 Click this button to close the plugin panel and continue to run StayAwake in the background.
 
-### Key Simulation Options
+### Select multiple Key Codes
 
 ![StayAwake UI](images/StayAwakeKeySelections.png)
 
 
-#### Scroll Lock cycling
-This is the default option, and it will work just fine for most users.
+StayAwake can randomly pick any of the 12 key codes during each simulation. In this popup, users can specify _at least_ one OR a select few OR all of the 12 key codes to be included in the simulation roster.
 
-However, some users using Remote Desktop alongside have reported spurious keystrokes being transmitted between the connected Windows devices. Users in such situations should explore other key simulation options.
+#### Scroll Lock cycling
+Scroll Lock toggling will work just fine for most users. However, some users using Remote Desktop alongside have reported spurious keystrokes being transmitted between the connected Windows devices. Users in such situations should explore other key simulation options.
 
 #### Volume Up & Down
 With this option, StayAwake will simulate a _Volume Down_ key press, immediately followed by a _Volume Up_ key press, thereby resulting in no net change in volume level.
@@ -71,7 +76,7 @@ With these options, StayWake will simulate key press of an unassigned keycode.
 
 These unassigned keycodes have been obtained from this Microsoft article on [Virtual-Key Codes](https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes).
 
-Microsoft may start utilizing any of these unassigned codes in the future -- but not all of them in one go. Hence all 10 of the currently unassigned codes have been included in the [StayAwake Key Simulation list](#stayawake--key-simulation-list) so that users can switch to another still available unassigned keycode.
+Microsoft may start utilizing any of these unassigned codes in the future -- but not all of them in one go. Hence all 10 of the currently unassigned codes have been included in the [Select multiple Key Codes](#select-multiple-key-codes) popup so that users can select other still available unassigned keycodes.
 
 
 ### Stealth Mode
@@ -87,7 +92,9 @@ Beginning with the v1.1.0.0 release, StayAwake will autostart with every Notepad
 3. StayAwake's suspended state will not carry over to future Notepad++ sessions -- a distinction to note during the choice of using the *Stealth Mode* menu option vs. the [Pause](#pause-button) button on the panel.
 
 #### Optional Tips
- * You can verify the stealth mode feature in action by *temporarily* setting the StayAwake Key simulation selection to [Volume Up & Down](#volume-up--down) and the [Seconds between Awakes](#seconds-between-awakes-field) to 10 seconds in the StayAwake plugin panel.
+
+ * You can verify the stealth mode feature in action by *temporarily* enabling only the [Volume Up & Down](#volume-up--down) key code and setting both *Minimum Awake Seconds* and *Maximum Awake Seconds* fields to 10 seconds.
+
  * You can add the *Stealth Mode* menu option to Notepad++'s right click menu by editing the **contextMenu.xml** file of Notepad++.
 
    For example, add the following line of text to the **contextMenu.xml** file:
@@ -100,6 +107,22 @@ Beginning with the v1.1.0.0 release, StayAwake will autostart with every Notepad
    Save changes to the xml file and restart Notepad++. *StayAwake Stealth Mode* menu option will start displaying in Notepad++'s right click menu, as seen in this clip:
 
    ![ContextMenuEdit](images/contextMenu.png)
+
+
+## Configuration File Details
+StayAwake saves its configuration in a file named `StayAwake.ini`. These key-value pairs are stored in this file:
+
+1. `SelectedKeyCodes`: This key stores a string of 12 characters -- each character indicating if a key code in the [Select multiple Key Codes](#select-multiple-key-codes) popup is selected or not with either a `1` or `0`, respectively.
+
+2. `MinimumIntervalInSeconds`: This key stores the minimum number of seconds between each StayAwake Key simulation as specified in the [Minimum Awake Seconds](#minimum-awake-seconds) field.
+
+   The `MinimumIntervalInSeconds` value must be an integer between 10 and 9990. Values outside this range will be ignored and the default value of 240 seconds will be used instead.
+
+3. `MaximumIntervalInSeconds`: This key stores the maximum number of seconds between each StayAwake Key simulation as specified in the [Maximum Awake Seconds](#maximum-awake-seconds) field.
+
+   The `MaximumIntervalInSeconds` value must be an integer between 10 and 9990. Values outside this range will be ignored and the default value of 240 seconds will be used instead.
+
+4. `AwakePaused`: This key stores a flag value (_Y_ or _N_) to indicate if StayAwake is in paused state.
 
 
 ## Alternatives
