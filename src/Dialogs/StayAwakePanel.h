@@ -52,6 +52,8 @@ protected:
 
    HWND hStealthMode{}, hPauseResume{};
 
+   StayAwakeCore mAwakeCore;
+
    virtual INT_PTR CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam);
 
    wstring getPreference(const wstring key, const wstring defaultVal) const;
