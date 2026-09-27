@@ -5,6 +5,8 @@
 #include "../Utils.h"
 #include "../NPP/DockingDlgInterface.h"
 
+#define DEBUG_DISPLAY_IDLE_TICKS
+
 constexpr auto BTN_TEXT_PAUSE = L"&Pause";
 constexpr auto BTN_TEXT_RESUME = L"&Resume";
 
