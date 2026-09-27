@@ -18,27 +18,45 @@
 #define IDC_STAYAWAKE_ABOUT_BUTTON      9013
 
 
-#define IDD_SELECT_KEYCODES_DIALOG      9050
-#define IDC_KEY_SCROLL_LOCK             9051
-#define IDC_KEY_VOLUME_UP_DOWN          9052
-#define IDC_KEY_UNASSIGNED_1            9053
-#define IDC_KEY_UNASSIGNED_2            9054
-#define IDC_KEY_UNASSIGNED_3            9055
-#define IDC_KEY_UNASSIGNED_4            9056
-#define IDC_KEY_UNASSIGNED_5            9057
-#define IDC_KEY_UNASSIGNED_6            9058
-#define IDC_KEY_UNASSIGNED_7            9059
-#define IDC_KEY_UNASSIGNED_8            9060
-#define IDC_KEY_UNASSIGNED_9            9061
-#define IDC_KEY_UNASSIGNED_10           9062
-#define IDC_KEY_SELECT_ALL_BTN          9071
-#define IDC_KEY_SELECT_NONE_BTN         9072
+#define IDD_SELECT_KEYCODES_DIALOG      9100
+#define IDC_KEY_SCROLL_LOCK             9101
+#define IDC_KEY_VOLUME_UP_DOWN          9102
+#define IDC_KEY_UNASSIGNED_1            9103
+#define IDC_KEY_UNASSIGNED_2            9104
+#define IDC_KEY_UNASSIGNED_3            9105
+#define IDC_KEY_UNASSIGNED_4            9106
+#define IDC_KEY_UNASSIGNED_5            9107
+#define IDC_KEY_UNASSIGNED_6            9108
+#define IDC_KEY_UNASSIGNED_7            9109
+#define IDC_KEY_UNASSIGNED_8            9110
+#define IDC_KEY_UNASSIGNED_9            9111
+#define IDC_KEY_UNASSIGNED_10           9112
+#define IDC_KEY_F13                     9113
+#define IDC_KEY_F14                     9114
+#define IDC_KEY_F15                     9115
+#define IDC_KEY_F16                     9116
+#define IDC_KEY_F17                     9117
+#define IDC_KEY_F18                     9118
+#define IDC_KEY_F19                     9119
+#define IDC_KEY_F20                     9120
+#define IDC_KEY_F21                     9121
+#define IDC_KEY_F22                     9122
+#define IDC_KEY_F23                     9123
+#define IDC_KEY_F24                     9124
+#define IDC_MOUSE_MOVE                  9125
+#define IDC_MOUSE_MOVE_ZERO             9126
+
+#define IDC_KEY_SELECT_NONE_BTN         9151
+#define IDC_KEY_SELECT_ALL_UNASSGND_BTN 9152
+#define IDC_KEY_SELECT_ALL_EXT_FN_BTN   9153
+#define IDC_KEY_SELECT_ALL_BTN          9154
 
 
-#define IDB_STAYAWAKE_ABOUT_BITMAP      9091
-#define IDI_STAYAWAKE_BTN_STD           9092
-#define IDI_DOCK_DARK_MODE_ICON         9093
-#define IDI_DOCK_LITE_MODE_ICON         9094
+
+#define IDB_STAYAWAKE_ABOUT_BITMAP      9201
+#define IDI_STAYAWAKE_BTN_STD           9202
+#define IDI_DOCK_DARK_MODE_ICON         9203
+#define IDI_DOCK_LITE_MODE_ICON         9204
 
 
 #define IDD_ABOUT_DIALOG                12000
