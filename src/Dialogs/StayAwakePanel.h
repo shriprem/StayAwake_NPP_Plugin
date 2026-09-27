@@ -40,7 +40,7 @@ public:
    void showAboutDialog();
 
 protected:
-   bool bPanelInitialized{}, panelMounted{};
+   bool bPanelInitialized{}, panelMounted{}, bSystemLocked{};
    UINT_PTR nTimerID{ 42 };
 
    UINT nRosterKeyCodes[LEN_ROSTER_KEYCODES]{};

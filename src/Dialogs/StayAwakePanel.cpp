@@ -9,6 +9,10 @@ AboutDialog _aboutDlg;
 
 INT_PTR CALLBACK StayAwakePanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam) {
    switch (message) {
+   case WM_INITDIALOG:
+      WTSRegisterSessionNotification(_hSelf, NOTIFY_FOR_THIS_SESSION);
+      break;
+
    case WM_COMMAND:
       switch LOWORD(wParam) {
 
@@ -74,6 +78,23 @@ INT_PTR CALLBACK StayAwakePanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM
    case WM_SHOWWINDOW:
       Utils::checkMenuItem(MI_STAY_AWAKE_PANEL, wParam);
       break;
+
+   case WM_WTSSESSION_CHANGE:
+      switch (wParam)
+      {
+      case WTS_SESSION_LOCK:
+         bSystemLocked = true;
+         break;
+
+      case WTS_SESSION_UNLOCK:
+         bSystemLocked = false;
+         break;
+      }
+      break;
+
+   case WM_DESTROY:
+         WTSUnRegisterSessionNotification(_hSelf);
+         break;
 
    default:
       return DockingDlgInterface::run_dlgProc(message, wParam, lParam);
@@ -255,6 +276,12 @@ void StayAwakePanel::pauseTimer() {
 
 void StayAwakePanel::simulateAwakeKeyPress() {
    if (!nRosterLength) initRosterKeyCodes();
+
+   if (bSystemLocked)
+   {
+      SetDlgItemText(_hSelf, IDC_STAYAWAKE_NEXT_EVENT, L"PAUSED since Windows is LOCKED");
+      return;
+   }
 
    UINT nAwakeKeyCode{ nRosterKeyCodes[rand() % nRosterLength] };
    wstring sAwakeKeyCode{};
