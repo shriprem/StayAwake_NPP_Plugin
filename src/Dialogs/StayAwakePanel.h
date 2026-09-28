@@ -18,16 +18,10 @@ const LPCWSTR INTERVAL_WARN_TITLE = L"Timer Interval in seconds";
 
 class StayAwakePanel : public DockingDlgInterface {
 public:
-   bool _newCmdLine{};
-
    StayAwakePanel() :DockingDlgInterface(IDD_STAYAWAKE_DOCKPANEL) {};
 
    void initConfig();
    void initPanel();
-
-   wstring getSelectedKeyCodes();
-   bool checkSelectedKeyCodes(wstring sKeyCodes);
-   bool saveSelectedKeyCodes(wstring sKeyCodes);
 
    bool isPanelInitialized() const { return bPanelInitialized; }
    bool isPanelMounted() const { return panelMounted; }
@@ -48,15 +42,12 @@ protected:
 
    UINT nIntervalMinSeconds{};
    UINT nIntervalMaxSeconds{};
-   TCHAR sIniFilePath[MAX_PATH]{};
 
    HWND hStealthMode{}, hPauseResume{};
 
-   StayAwakeCore mAwakeCore;
+   StayAwakeCore mAwakeCore{};
 
    virtual INT_PTR CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam);
-
-   wstring getPreference(const wstring key, const wstring defaultVal) const;
 
    void initRosterKeyCodes();
    void initAwakes();

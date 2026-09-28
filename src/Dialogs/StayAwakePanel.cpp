@@ -104,28 +104,15 @@ INT_PTR CALLBACK StayAwakePanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM
 }
 
 void StayAwakePanel::initConfig() {
+   wchar_t sIniFilePath[MAX_PATH]{};
    NppMessage(NPPM_GETPLUGINSCONFIGDIR, MAX_PATH, (LPARAM)sIniFilePath);
    PathAppend(sIniFilePath, PREF_INI_FILE);
+   mAwakeCore.SetConfigFilePath(sIniFilePath);
 
    // Initialize RNG
    std::srand(static_cast<unsigned>(time(nullptr)));
 
-   int nIntervalLegacy{}, nIntervalMin{}, nIntervalMax{};
-
-   nIntervalLegacy = GetPrivateProfileInt(PREF_DEFAULTS, PREF_INTERVAL_LEGACY, DEF_PERIOD, sIniFilePath);
-   if (nIntervalLegacy < MIN_PERIOD || nIntervalLegacy > MAX_PERIOD)
-      nIntervalLegacy = DEF_PERIOD;
-
-   nIntervalMin = GetPrivateProfileInt(PREF_DEFAULTS, PREF_INTERVAL_MINIMUM, nIntervalLegacy, sIniFilePath);
-   if (nIntervalMin < MIN_PERIOD || nIntervalMin > MAX_PERIOD)
-      nIntervalMin = DEF_PERIOD;
-
-   nIntervalMax = GetPrivateProfileInt(PREF_DEFAULTS, PREF_INTERVAL_MAXIMUM, nIntervalLegacy, sIniFilePath);
-   if (nIntervalMax < MIN_PERIOD || nIntervalMax > MAX_PERIOD)
-      nIntervalMax = DEF_PERIOD;
-
-   nIntervalMinSeconds = (nIntervalMin <= nIntervalMax) ? nIntervalMin : nIntervalMax;
-   nIntervalMaxSeconds = (nIntervalMin >= nIntervalMax) ? nIntervalMin : nIntervalMax;
+   mAwakeCore.InitIntervals(nIntervalMinSeconds, nIntervalMaxSeconds);
 }
 
 void StayAwakePanel::initPanel() {
@@ -150,48 +137,6 @@ void StayAwakePanel::initPanel() {
    bPanelInitialized = true;
 }
 
-wstring StayAwakePanel::getSelectedKeyCodes() {
-   const int bufSize{ LEN_ROSTER_KEYCODES + 1 };
-   wchar_t sBuf[bufSize]{};
-
-   GetPrivateProfileString(PREF_DEFAULTS, PREF_SELECTED_KEYCODES, L"N/A", sBuf, bufSize, sIniFilePath);
-
-   wstring sKeyCodes{ sBuf };
-
-   if (sKeyCodes == L"N/A") {
-      UINT nLegacyKeyCode = GetPrivateProfileInt(PREF_DEFAULTS, PREF_LEGACY_KEYCODE, 99, sIniFilePath);
-
-      if (nLegacyKeyCode == 99)
-         sKeyCodes = DEF_SELECTED_KEYCODES;
-      else
-      {
-         sKeyCodes = wstring(LEN_ROSTER_KEYCODES, L'0');
-         sKeyCodes.replace(nLegacyKeyCode % LEN_ROSTER_KEYCODES, 1, L"1");
-      }
-
-      WritePrivateProfileString(PREF_DEFAULTS, PREF_LEGACY_KEYCODE, nullptr, sIniFilePath);
-      saveSelectedKeyCodes(sKeyCodes);
-   }
-   else if (!checkSelectedKeyCodes(sKeyCodes))
-   {
-      sKeyCodes = DEF_SELECTED_KEYCODES;
-      saveSelectedKeyCodes(sKeyCodes);
-   }
-
-   return sKeyCodes;
-}
-
-bool StayAwakePanel::checkSelectedKeyCodes(wstring sKeyCodes) {
-   return (sKeyCodes.length() == LEN_ROSTER_KEYCODES &&
-      sKeyCodes != wstring(LEN_ROSTER_KEYCODES, L'0') &&
-      sKeyCodes.find_first_not_of(L"01") == std::string::npos);
-}
-
-bool StayAwakePanel::saveSelectedKeyCodes(wstring sKeyCodes) {
-   return checkSelectedKeyCodes(sKeyCodes) &&
-      WritePrivateProfileString(PREF_DEFAULTS, PREF_SELECTED_KEYCODES, sKeyCodes.c_str(), sIniFilePath);
-}
-
 void StayAwakePanel::display(bool toShow) {
    DockingDlgInterface::display(toShow);
 
@@ -211,17 +156,8 @@ void StayAwakePanel::showAboutDialog() {
    _aboutDlg.doDialog((HINSTANCE)_gModule);
 }
 
-wstring StayAwakePanel::getPreference(const wstring key, const wstring defaultVal) const {
-   const int bufSize{ MAX_PATH };
-   wstring ftBuf(bufSize, '\0');
-
-   GetPrivateProfileString(PREF_DEFAULTS, key.c_str(), defaultVal.c_str(), ftBuf.data(), bufSize, sIniFilePath);
-
-   return wstring{ ftBuf.c_str() };
-}
-
 bool StayAwakePanel::isTimerPaused() {
-   return (getPreference(PREF_AWAKE_PAUSED, L"N") == L"Y");
+   return (mAwakeCore.GetPreference(PREF_AWAKE_PAUSED, L"N") == L"Y");
 }
 
 void StayAwakePanel::showPausedInfo(bool both) {
@@ -232,7 +168,7 @@ void StayAwakePanel::showPausedInfo(bool both) {
 }
 
 void StayAwakePanel::initRosterKeyCodes() {
-   wstring sSelectedKeyCodes{ getSelectedKeyCodes() };
+   wstring sSelectedKeyCodes{ mAwakeCore.GetSelectedKeyCodes() };
 
    nRosterLength = 0;
 
@@ -249,7 +185,7 @@ void StayAwakePanel::initAwakes() {
    if (bPanelInitialized)
       SetWindowText(hPauseResume, BTN_TEXT_PAUSE);
 
-   WritePrivateProfileString(PREF_DEFAULTS, PREF_AWAKE_PAUSED, L"N", sIniFilePath);
+   mAwakeCore.SetPreference(PREF_AWAKE_PAUSED, L"N");
 }
 
 void StayAwakePanel::killTimer() {
@@ -270,7 +206,7 @@ void StayAwakePanel::pauseTimer() {
    KillTimer(_hSelf, nTimerID);
 
    SetWindowText(hPauseResume, BTN_TEXT_RESUME);
-   WritePrivateProfileString(PREF_DEFAULTS, PREF_AWAKE_PAUSED, L"Y", sIniFilePath);
+   mAwakeCore.SetPreference(PREF_AWAKE_PAUSED, L"Y");
    showPausedInfo(FALSE);
 }
 
@@ -315,7 +251,7 @@ void StayAwakePanel::simulateAwakeKeyPress() {
 }
 
 void StayAwakePanel::showSelectKeyCodesDialog() {
-   if (_selectKeyCodes.doDialog((HINSTANCE)_gModule) == IDOK) {
+   if (_selectKeyCodes.doDialog((HINSTANCE)_gModule, mAwakeCore) == IDOK) {
       initRosterKeyCodes();
       if (!isTimerPaused()) simulateAwakeKeyPress();
    }
@@ -364,8 +300,8 @@ void StayAwakePanel::onSetInterval() {
       SetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL_MAX, nIntervalMaxSeconds, FALSE);
    }
 
-   WritePrivateProfileString(PREF_DEFAULTS, PREF_INTERVAL_MINIMUM, to_wstring(nIntervalMinSeconds).c_str(), sIniFilePath);
-   WritePrivateProfileString(PREF_DEFAULTS, PREF_INTERVAL_MAXIMUM, to_wstring(nIntervalMaxSeconds).c_str(), sIniFilePath);
+   mAwakeCore.SetPreference(PREF_INTERVAL_MINIMUM, to_wstring(nIntervalMinSeconds));
+   mAwakeCore.SetPreference(PREF_INTERVAL_MAXIMUM, to_wstring(nIntervalMaxSeconds));
    initAwakes();
 }
 
