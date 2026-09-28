@@ -1,13 +1,14 @@
 #include "SelectKeyCodes.h"
 
-static_assert(IDC_KEY_UNASSIGNED_10 - IDC_KEY_SCROLL_LOCK + 1 == LEN_ROSTER_KEYCODES, "Roster checkbox IDs must be consecutive");
+static_assert(IDC_MOUSE_MOVE_ZERO - IDC_KEY_SCROLL_LOCK == LEN_ROSTER_KEYCODES, "Roster checkbox IDs must be consecutive");
 
 extern NppData nppData;
 extern StayAwakePanel _awakePanel;
 
 
-INT_PTR SelectKeyCodes::doDialog(HINSTANCE hInst) {
+INT_PTR SelectKeyCodes::doDialog(HINSTANCE hInst, StayAwakeCore& awakeCore) {
    Window::init(hInst, nppData._nppHandle);
+   mAwakeCore = awakeCore;
 
    // Blocks until EndDialog() is called from run_dlgProc.
    INT_PTR result = DialogBoxParam(_hInst, MAKEINTRESOURCE(IDD_SELECT_KEYCODES_DIALOG), _hParent, dlgProc, reinterpret_cast<LPARAM>(this));
@@ -23,18 +24,31 @@ INT_PTR CALLBACK SelectKeyCodes::run_dlgProc(UINT message, WPARAM wParam, LPARAM
    switch (message) {
    case WM_INITDIALOG:
       NppMessage(NPPM_DARKMODESUBCLASSANDTHEME, static_cast<WPARAM>(NppDarkMode::dmfInit), reinterpret_cast<LPARAM>(_hSelf));
-      goToCenter();
-      checkAllBoxes(_awakePanel.getSelectedKeyCodes());
+      initPanel();
       break;
 
    case WM_COMMAND:
       switch LOWORD(wParam) {
+      case IDC_MOUSE_MOVE:
+         onClickedMouseMove();
+         break;
+
       case IDC_KEY_SELECT_ALL_BTN:
          checkAllBoxes(wstring(LEN_ROSTER_KEYCODES, L'1'));
+         onClickedMouseMove();
          break;
 
       case IDC_KEY_SELECT_NONE_BTN:
          checkAllBoxes(wstring(LEN_ROSTER_KEYCODES, L'0'));
+         onClickedMouseMove();
+         break;
+
+      case IDC_KEY_SELECT_ALL_UNASSGND_BTN:
+         checkAllBoxes(wstring(LEN_ROSTER_KEYCODES, L'1'), IDC_KEY_UNASSIGNED_1, IDC_KEY_F13);
+         break;
+
+      case IDC_KEY_SELECT_ALL_EXT_FN_BTN:
+         checkAllBoxes(wstring(LEN_ROSTER_KEYCODES, L'1'), IDC_KEY_F13, IDC_MOUSE_MOVE);
          break;
 
       case IDOK:
@@ -55,9 +69,20 @@ INT_PTR CALLBACK SelectKeyCodes::run_dlgProc(UINT message, WPARAM wParam, LPARAM
    return FALSE;
 }
 
-void SelectKeyCodes::checkAllBoxes(const wstring& sSelectedKeyCodes) {
-   for (int i{}; i < LEN_ROSTER_KEYCODES; i++)
-      CheckDlgButton(_hSelf, IDC_KEY_SCROLL_LOCK + i, sSelectedKeyCodes.at(i) == L'1');
+void SelectKeyCodes::initPanel()
+{
+   checkAllBoxes(mAwakeCore.GetSelectedKeyCodes());
+
+   CheckDlgButton(_hSelf, IDC_MOUSE_MOVE_ZERO,
+      (mAwakeCore.GetPreference(PREF_MOUSE_MOVE_ZERO, L"Y") == L"Y") ? BST_CHECKED : BST_UNCHECKED);
+   onClickedMouseMove();
+
+   goToCenter();
+}
+
+void SelectKeyCodes::checkAllBoxes(const wstring& sSelectedKeyCodes, int start, int endNext) {
+   for (int i{ start }; i < endNext; i++)
+      CheckDlgButton(_hSelf, i, sSelectedKeyCodes.at(i % IDC_KEY_SCROLL_LOCK) == L'1');
 }
 
 bool SelectKeyCodes::onApply() {
@@ -71,10 +96,16 @@ bool SelectKeyCodes::onApply() {
       return false;
    }
 
-   if (!_awakePanel.saveSelectedKeyCodes(sSelectedKeyCodes)) {
+   if (!mAwakeCore.SaveSelectedKeyCodes(sSelectedKeyCodes)) {
       MessageBox(_hSelf, L"Unable to save to the StayAwake.ini file.", L"Select multiple Key Codes", MB_ICONEXCLAMATION);
       return false;
    }
 
+   mAwakeCore.SetPreference(PREF_MOUSE_MOVE_ZERO, IsDlgButtonChecked(_hSelf, IDC_MOUSE_MOVE_ZERO) ? L"Y" : L"N");
    return true;
+}
+
+void SelectKeyCodes::onClickedMouseMove()
+{
+   EnableWindow(GetDlgItem(_hSelf, IDC_MOUSE_MOVE_ZERO), IsDlgButtonChecked(_hSelf, IDC_MOUSE_MOVE));
 }
