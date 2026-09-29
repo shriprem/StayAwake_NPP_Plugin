@@ -33,6 +33,7 @@ using std::to_wstring;
 const enum MenuIndex {
    MI_STAY_AWAKE_PANEL,
    MI_STAY_AWAKE_STEALTH,
+   MI_SELECT_INPUT_OPTIONS,
    MI_ABOUT_DIALOG,
    MI_COUNT
 };
@@ -51,6 +52,7 @@ LRESULT NppMessage(UINT messageID, WPARAM wparam, LPARAM lparam);
 void InitStayAwakePanel();
 void ToggleStayAwakePanel();
 void ShowStayAwakePanel(bool show);
+void SelectInputOptions();
 void StayAwakeStealthMode();
 void ShowAboutDialog();
 

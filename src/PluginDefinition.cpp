@@ -40,6 +40,7 @@ void pluginCleanUp(){}
 
 void commandMenuInit() {
    setCommand(MI_STAY_AWAKE_PANEL, MENU_SHOW_PANEL, ToggleStayAwakePanel, NULL, _awakePanel.isVisible());
+   setCommand(MI_SELECT_INPUT_OPTIONS, MENU_SELECT_INPUT_OPTIONS, SelectInputOptions);
    setCommand(MI_STAY_AWAKE_STEALTH, MENU_STEALTH_MODE, StayAwakeStealthMode, NULL, true);
    setCommand(MI_ABOUT_DIALOG, MENU_ABOUT, ShowAboutDialog);
 
@@ -108,6 +109,10 @@ void ShowStayAwakePanel(bool show) {
    }
 
    _awakePanel.display(show);
+}
+
+void SelectInputOptions() {
+   _awakePanel.showSelectKeyCodesDialog();
 }
 
 void StayAwakeStealthMode() {
