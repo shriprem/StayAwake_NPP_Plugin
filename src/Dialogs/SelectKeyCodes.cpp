@@ -1,6 +1,6 @@
 #include "SelectKeyCodes.h"
 
-static_assert(IDC_MOUSE_MOVE_ZERO - IDC_KEY_SCROLL_LOCK == LEN_ROSTER_KEYCODES, "Roster checkbox IDs must be consecutive");
+static_assert(IDC_MOUSE_MOVE_ZERO - IDC_KEY_SCROLL_LOCK + 1 == LEN_ROSTER_KEYCODES, "Roster checkbox IDs must be consecutive");
 
 extern NppData nppData;
 extern StayAwakePanel _awakePanel;
@@ -24,23 +24,19 @@ INT_PTR CALLBACK SelectKeyCodes::run_dlgProc(UINT message, WPARAM wParam, LPARAM
    switch (message) {
    case WM_INITDIALOG:
       NppMessage(NPPM_DARKMODESUBCLASSANDTHEME, static_cast<WPARAM>(NppDarkMode::dmfInit), reinterpret_cast<LPARAM>(_hSelf));
-      initPanel();
+      checkAllBoxes(mAwakeCore.GetSelectedKeyCodes());
+      goToCenter();
       break;
 
    case WM_COMMAND:
       switch LOWORD(wParam) {
-      case IDC_MOUSE_MOVE:
-         onClickedMouseMove();
-         break;
 
       case IDC_KEY_SELECT_ALL_BTN:
          checkAllBoxes(wstring(LEN_ROSTER_KEYCODES, L'1'));
-         onClickedMouseMove();
          break;
 
       case IDC_KEY_SELECT_NONE_BTN:
          checkAllBoxes(wstring(LEN_ROSTER_KEYCODES, L'0'));
-         onClickedMouseMove();
          break;
 
       case IDC_KEY_SELECT_ALL_UNASSGND_BTN:
@@ -69,17 +65,6 @@ INT_PTR CALLBACK SelectKeyCodes::run_dlgProc(UINT message, WPARAM wParam, LPARAM
    return FALSE;
 }
 
-void SelectKeyCodes::initPanel()
-{
-   checkAllBoxes(mAwakeCore.GetSelectedKeyCodes());
-
-   CheckDlgButton(_hSelf, IDC_MOUSE_MOVE_ZERO,
-      (mAwakeCore.GetPreference(PREF_MOUSE_MOVE_ZERO, L"Y") == L"Y") ? BST_CHECKED : BST_UNCHECKED);
-   onClickedMouseMove();
-
-   goToCenter();
-}
-
 void SelectKeyCodes::checkAllBoxes(const wstring& sSelectedKeyCodes, int start, int endNext) {
    for (int i{ start }; i < endNext; i++)
       CheckDlgButton(_hSelf, i, sSelectedKeyCodes.at(i % IDC_KEY_SCROLL_LOCK) == L'1');
@@ -101,11 +86,6 @@ bool SelectKeyCodes::onApply() {
       return false;
    }
 
-   mAwakeCore.SetPreference(PREF_MOUSE_MOVE_ZERO, IsDlgButtonChecked(_hSelf, IDC_MOUSE_MOVE_ZERO) ? L"Y" : L"N");
    return true;
 }
 
-void SelectKeyCodes::onClickedMouseMove()
-{
-   EnableWindow(GetDlgItem(_hSelf, IDC_MOUSE_MOVE_ZERO), IsDlgButtonChecked(_hSelf, IDC_MOUSE_MOVE));
-}
