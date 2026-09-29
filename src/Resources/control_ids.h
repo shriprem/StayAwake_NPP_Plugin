@@ -63,5 +63,6 @@
 #define IDC_ABOUT_NAME                  12001
 #define IDC_ABOUT_VERSION               12002
 #define IDC_ABOUT_ATTRIBUTION           12003
-#define IDC_ABOUT_PROD_URL              12004
-#define IDC_ABOUT_BUILD_TIME            12005
+#define IDC_ABOUT_PROD_REQ              12004
+#define IDC_ABOUT_PROD_URL              12005
+#define IDC_ABOUT_BUILD_TIME            12006

@@ -26,6 +26,7 @@ public:
    bool isPanelInitialized() const { return bPanelInitialized; }
    bool isPanelMounted() const { return panelMounted; }
    bool isTimerPaused();
+   void showSelectKeyCodesDialog();
    void stealthMode(bool active);
 
    virtual void display(bool toShow=true);
@@ -56,7 +57,6 @@ protected:
 
    void showPausedInfo(bool both);
    void simulateAwakeKeyPress();
-   void showSelectKeyCodesDialog();
    void onKillFocusIntervalMin();
    void onKillFocusIntervalMax();
    void onSetInterval();
