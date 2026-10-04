@@ -16,29 +16,29 @@ INT_PTR CALLBACK StayAwakePanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM
    case WM_COMMAND:
       switch LOWORD(wParam) {
 
-      case IDC_STAYAWAKE_KEYS_ROSTER_BTN:
+      case IDC_SELECT_INPUT_OPTIONS_BTN:
          showSelectKeyCodesDialog();
          break;
 
-      case IDC_STAYAWAKE_INTERVAL_MIN:
+      case IDC_INTERVAL_MIN_EDIT:
          if (HIWORD(wParam) == EN_KILLFOCUS)
             onKillFocusIntervalMin();
          break;
 
-      case IDC_STAYAWAKE_INTERVAL_MAX:
+      case IDC_INTERVAL_MAX_EDIT:
          if (HIWORD(wParam) == EN_KILLFOCUS)
             onKillFocusIntervalMax();
          break;
 
-      case IDC_STAYAWAKE_SET_INTERVAL_BTN:
+      case IDC_SET_TIMER_BTN:
          onSetInterval();
          break;
 
-      case IDC_STAYAWAKE_STEALTH_MODE:
+      case IDC_STEALTH_MODE_CBX:
          StayAwakeStealthMode();
          break;
 
-      case IDC_STAYAWAKE_PAUSE_RESUME_BTN:
+      case IDC_PAUSE_RESUME_BTN:
          if (isTimerPaused())
             initAwakes();
          else
@@ -51,7 +51,7 @@ INT_PTR CALLBACK StayAwakePanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM
          display(false);
          break;
 
-      case IDC_STAYAWAKE_ABOUT_BUTTON:
+      case IDC_ABOUT_BTN:
          showAboutDialog();
          break;
       }
@@ -118,20 +118,20 @@ void StayAwakePanel::initConfig() {
 void StayAwakePanel::initPanel() {
    initConfig();
 
-   hStealthMode = GetDlgItem(_hSelf, IDC_STAYAWAKE_STEALTH_MODE);
-   hPauseResume = GetDlgItem(_hSelf, IDC_STAYAWAKE_PAUSE_RESUME_BTN);
+   hStealthMode = GetDlgItem(_hSelf, IDC_STEALTH_MODE_CBX);
+   hPauseResume = GetDlgItem(_hSelf, IDC_PAUSE_RESUME_BTN);
 
    // Init Timer Seconds
-   SetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL_MIN, nIntervalMinSeconds, FALSE);
-   SetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL_MAX, nIntervalMaxSeconds, FALSE);
+   SetDlgItemInt(_hSelf, IDC_INTERVAL_MIN_EDIT, nIntervalMinSeconds, FALSE);
+   SetDlgItemInt(_hSelf, IDC_INTERVAL_MAX_EDIT, nIntervalMaxSeconds, FALSE);
 
-   Utils::addTooltip(_hSelf, IDC_STAYAWAKE_INTERVAL_MIN, L"", INTERVAL_TOOLTIP, 3, TRUE);
-   Utils::addTooltip(_hSelf, IDC_STAYAWAKE_INTERVAL_MAX, L"", INTERVAL_TOOLTIP, 3, TRUE);
+   Utils::addTooltip(_hSelf, IDC_INTERVAL_MIN_EDIT, L"", INTERVAL_TOOLTIP, 3, TRUE);
+   Utils::addTooltip(_hSelf, IDC_INTERVAL_MAX_EDIT, L"", INTERVAL_TOOLTIP, 3, TRUE);
 
    SetWindowText(hPauseResume, isTimerPaused() ? BTN_TEXT_RESUME :BTN_TEXT_PAUSE);
 
-   Utils::loadBitmap(_hSelf, IDC_STAYAWAKE_ABOUT_BUTTON, IDB_STAYAWAKE_ABOUT_BITMAP);
-   Utils::addTooltip(_hSelf, IDC_STAYAWAKE_ABOUT_BUTTON, L"", ABOUT_DIALOG_TITLE, TRUE);
+   Utils::loadBitmap(_hSelf, IDC_ABOUT_BTN, IDB_STAYAWAKE_ABOUT_BITMAP);
+   Utils::addTooltip(_hSelf, IDC_ABOUT_BTN, L"", ABOUT_DIALOG_TITLE, TRUE);
 
    if (isTimerPaused()) showPausedInfo(TRUE);
    bPanelInitialized = true;
@@ -144,7 +144,7 @@ void StayAwakePanel::display(bool toShow) {
 
    if (toShow) {
       if (!isTimerPaused()) initAwakes();
-      SetFocus(GetDlgItem(_hSelf, IDC_STAYAWAKE_INTERVAL_MIN));
+      SetFocus(GetDlgItem(_hSelf, IDC_INTERVAL_MIN_EDIT));
    }
 }
 
@@ -162,9 +162,9 @@ bool StayAwakePanel::isTimerPaused() {
 
 void StayAwakePanel::showPausedInfo(bool both) {
    if (both)
-      SetDlgItemText(_hSelf, IDC_STAYAWAKE_LAST_EVENT, L"Last StayAwake event:         PAUSED");
+      SetDlgItemText(_hSelf, IDC_LAST_EVENT_TIME_INFO, L"Last StayAwake event:         PAUSED");
 
-   SetDlgItemText(_hSelf, IDC_STAYAWAKE_NEXT_EVENT, L"Next StayAwake event:         PAUSED");
+   SetDlgItemText(_hSelf, IDC_NEXT_EVENT_TIME_INFO, L"Next StayAwake event:         PAUSED");
 }
 
 void StayAwakePanel::initRosterKeyCodes() {
@@ -199,7 +199,7 @@ void StayAwakePanel::stealthMode(bool active) {
    else
       killTimer();
 
-   CheckDlgButton(_hSelf, IDC_STAYAWAKE_STEALTH_MODE, active);
+   CheckDlgButton(_hSelf, IDC_STEALTH_MODE_CBX, active);
 }
 
 void StayAwakePanel::pauseTimer() {
@@ -215,7 +215,7 @@ void StayAwakePanel::simulateAwakeKeyPress() {
 
    if (bSystemLocked)
    {
-      SetDlgItemText(_hSelf, IDC_STAYAWAKE_NEXT_EVENT, L"PAUSED since Windows is LOCKED");
+      SetDlgItemText(_hSelf, IDC_NEXT_EVENT_TIME_INFO, L"PAUSED since Windows is LOCKED");
       return;
    }
 
@@ -233,20 +233,20 @@ void StayAwakePanel::simulateAwakeKeyPress() {
    if (bPanelInitialized) {
       SYSTEMTIME lastTime{};
       GetLocalTime(&lastTime);
-      SetDlgItemText(_hSelf, IDC_STAYAWAKE_LAST_EVENT, Utils::formatSystemTime(lastTime, L"Last StayAwake event").c_str());
+      SetDlgItemText(_hSelf, IDC_LAST_EVENT_TIME_INFO, Utils::formatSystemTime(lastTime, L"Last StayAwake event").c_str());
 
 #ifdef DEBUG_DISPLAY_IDLE_TICKS
       Sleep((rand() % 20) + 1); // simulate a small delay to get a more accurate idle time
       ULONGLONG idleTime = mAwakeCore.GetIdleTimeMilliseconds();
-      SetDlgItemText(_hSelf, IDC_STAYAWAKE_LAST_KEYCODE, (L"[" + sAwakeKeyCode + L":" + to_wstring(idleTime) + L" ms]").c_str());
+      SetDlgItemText(_hSelf, IDC_LAST_EVENT_INPUT_INFO, (L"[" + sAwakeKeyCode + L":" + to_wstring(idleTime) + L" ms]").c_str());
 #else
-      SetDlgItemText(_hSelf, IDC_STAYAWAKE_LAST_KEYCODE, (L"[" + sAwakeKeyCode + L"]").c_str());
+      SetDlgItemText(_hSelf, IDC_LAST_EVENT_INPUT_INFO, (L"[" + sAwakeKeyCode + L"]").c_str());
 #endif
 
       SYSTEMTIME nextTime{};
       GetSystemTime(&nextTime);
       Utils::addSecondsToTime(nextTime, nTimerSeconds);
-      SetDlgItemText(_hSelf, IDC_STAYAWAKE_NEXT_EVENT, Utils::formatSystemTime(nextTime, L"Next StayAwake event").c_str());
+      SetDlgItemText(_hSelf, IDC_NEXT_EVENT_TIME_INFO, Utils::formatSystemTime(nextTime, L"Next StayAwake event").c_str());
    }
 }
 
@@ -260,12 +260,12 @@ void StayAwakePanel::showSelectKeyCodesDialog() {
 void StayAwakePanel::onKillFocusIntervalMin() {
    if (!bPanelInitialized) return;
 
-   UINT nInterval{ GetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL_MIN, nullptr, FALSE) };
+   UINT nInterval{ GetDlgItemInt(_hSelf, IDC_INTERVAL_MIN_EDIT, nullptr, FALSE) };
 
    if (nInterval < MIN_PERIOD || nInterval > MAX_PERIOD)
    {
-      Utils::showEditBalloonTip(GetDlgItem(_hSelf, IDC_STAYAWAKE_INTERVAL_MIN), INTERVAL_WARN_TITLE, INTERVAL_WARNING.c_str());
-      SetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL_MIN, nIntervalMinSeconds, FALSE);
+      Utils::showEditBalloonTip(GetDlgItem(_hSelf, IDC_INTERVAL_MIN_EDIT), INTERVAL_WARN_TITLE, INTERVAL_WARNING.c_str());
+      SetDlgItemInt(_hSelf, IDC_INTERVAL_MIN_EDIT, nIntervalMinSeconds, FALSE);
       return;
    }
 
@@ -275,12 +275,12 @@ void StayAwakePanel::onKillFocusIntervalMin() {
 void StayAwakePanel::onKillFocusIntervalMax() {
    if (!bPanelInitialized) return;
 
-   UINT nInterval{ GetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL_MAX, nullptr, FALSE) };
+   UINT nInterval{ GetDlgItemInt(_hSelf, IDC_INTERVAL_MAX_EDIT, nullptr, FALSE) };
 
    if (nInterval < MIN_PERIOD || nInterval > MAX_PERIOD)
    {
-      Utils::showEditBalloonTip(GetDlgItem(_hSelf, IDC_STAYAWAKE_INTERVAL_MAX), INTERVAL_WARN_TITLE, INTERVAL_WARNING.c_str());
-      SetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL_MAX, nIntervalMaxSeconds, FALSE);
+      Utils::showEditBalloonTip(GetDlgItem(_hSelf, IDC_INTERVAL_MAX_EDIT), INTERVAL_WARN_TITLE, INTERVAL_WARNING.c_str());
+      SetDlgItemInt(_hSelf, IDC_INTERVAL_MAX_EDIT, nIntervalMaxSeconds, FALSE);
       return;
    }
 
@@ -296,8 +296,8 @@ void StayAwakePanel::onSetInterval() {
       nIntervalMinSeconds = nIntervalMaxSeconds;
       nIntervalMaxSeconds = nTemp;
 
-      SetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL_MIN, nIntervalMinSeconds, FALSE);
-      SetDlgItemInt(_hSelf, IDC_STAYAWAKE_INTERVAL_MAX, nIntervalMaxSeconds, FALSE);
+      SetDlgItemInt(_hSelf, IDC_INTERVAL_MIN_EDIT, nIntervalMinSeconds, FALSE);
+      SetDlgItemInt(_hSelf, IDC_INTERVAL_MAX_EDIT, nIntervalMaxSeconds, FALSE);
    }
 
    mAwakeCore.SetPreference(PREF_INTERVAL_MINIMUM, to_wstring(nIntervalMinSeconds));
@@ -307,7 +307,7 @@ void StayAwakePanel::onSetInterval() {
 
 void StayAwakePanel::onPanelResize(LPARAM lParam) {
    // About button
-   HWND hAboutBtn{ GetDlgItem(_hSelf, IDC_STAYAWAKE_ABOUT_BUTTON) };
+   HWND hAboutBtn{ GetDlgItem(_hSelf, IDC_ABOUT_BTN) };
    RECT rcAboutBtn;
    GetWindowRect(hAboutBtn, &rcAboutBtn);
 
