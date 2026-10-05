@@ -63,11 +63,13 @@ BEGIN
     PUSHBUTTON      "Select &All",IDC_KEY_SELECT_ALL_BTN,225,130,85,14
     DEFPUSHBUTTON   "A&pply",IDOK,225,155,85,14
     PUSHBUTTON      "&Cancel",IDCANCEL,225,180,85,14
+    PUSHBUTTON      "...",IDC_INPUT_OPTIONS_INFO_BTN,312,2,15,13,BS_BITMAP
 END
 
 
 // BITMAPS
-IDB_STAYAWAKE_ABOUT_BITMAP BITMAP                  "about.bmp"
-IDI_STAYAWAKE_BTN_STD ICON                         "StayAwake.ico"
+IDI_STAYAWAKE_BTN_STD   ICON                       "StayAwake.ico"
 IDI_DOCK_DARK_MODE_ICON ICON                       "dock_dark.ico"
 IDI_DOCK_LITE_MODE_ICON ICON                       "dock_lite.ico"
+IDB_ABOUT_BITMAP        BITMAP                     "about.bmp"
+IDB_INFO_BITMAP         BITMAP                     "information.bmp"

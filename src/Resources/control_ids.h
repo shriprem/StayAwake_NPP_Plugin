@@ -50,13 +50,15 @@
 #define IDC_KEY_SELECT_ALL_UNASSGND_BTN 9152
 #define IDC_KEY_SELECT_ALL_EXT_FN_BTN   9153
 #define IDC_KEY_SELECT_ALL_BTN          9154
+#define IDC_INPUT_OPTIONS_INFO_BTN      9155
 
 
 
-#define IDB_STAYAWAKE_ABOUT_BITMAP      9201
-#define IDI_STAYAWAKE_BTN_STD           9202
-#define IDI_DOCK_DARK_MODE_ICON         9203
-#define IDI_DOCK_LITE_MODE_ICON         9204
+#define IDI_STAYAWAKE_BTN_STD           9201
+#define IDI_DOCK_DARK_MODE_ICON         9202
+#define IDI_DOCK_LITE_MODE_ICON         9203
+#define IDB_ABOUT_BITMAP                9204
+#define IDB_INFO_BITMAP                 9205
 
 
 #define IDD_ABOUT_DIALOG                12000
