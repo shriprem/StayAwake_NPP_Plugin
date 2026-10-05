@@ -1,4 +1,5 @@
 #include "SelectKeyCodes.h"
+#include "../Utils.h"
 
 static_assert(IDC_MOUSE_MOVE_ZERO - IDC_KEY_SCROLL_LOCK + 1 == LEN_ROSTER_KEYCODES, "Roster checkbox IDs must be consecutive");
 
@@ -24,8 +25,7 @@ INT_PTR CALLBACK SelectKeyCodes::run_dlgProc(UINT message, WPARAM wParam, LPARAM
    switch (message) {
    case WM_INITDIALOG:
       NppMessage(NPPM_DARKMODESUBCLASSANDTHEME, static_cast<WPARAM>(NppDarkMode::dmfInit), reinterpret_cast<LPARAM>(_hSelf));
-      checkAllBoxes(mAwakeCore.GetSelectedKeyCodes());
-      goToCenter();
+      initDialog();
       break;
 
    case WM_COMMAND:
@@ -47,6 +47,11 @@ INT_PTR CALLBACK SelectKeyCodes::run_dlgProc(UINT message, WPARAM wParam, LPARAM
          checkAllBoxes(wstring(LEN_ROSTER_KEYCODES, L'1'), IDC_KEY_F13, IDC_MOUSE_MOVE);
          break;
 
+      case IDC_INPUT_OPTIONS_INFO_BTN:
+         ShellExecute(_hSelf, L"open",
+            L"https://github.com/shriprem/StayAwake_NPP_Plugin/blob/Version2.0/InputOptions.md", nullptr, nullptr, SW_SHOW);
+         break;
+
       case IDOK:
          if (onApply()) {
             EndDialog(_hSelf, LOWORD(wParam));
@@ -63,6 +68,15 @@ INT_PTR CALLBACK SelectKeyCodes::run_dlgProc(UINT message, WPARAM wParam, LPARAM
    }
 
    return FALSE;
+}
+
+void SelectKeyCodes::initDialog() {
+   checkAllBoxes(mAwakeCore.GetSelectedKeyCodes());
+
+   Utils::addTooltip(_hSelf, IDC_INPUT_OPTIONS_INFO_BTN, L"", L"View Readme Online", 3, TRUE);
+   Utils::loadBitmap(_hSelf, IDC_INPUT_OPTIONS_INFO_BTN, IDB_INFO_BITMAP);
+
+   goToCenter();
 }
 
 void SelectKeyCodes::checkAllBoxes(const wstring& sSelectedKeyCodes, int start, int endNext) {

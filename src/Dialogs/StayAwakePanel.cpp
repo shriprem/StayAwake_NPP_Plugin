@@ -130,7 +130,7 @@ void StayAwakePanel::initPanel() {
 
    SetWindowText(hPauseResume, isTimerPaused() ? BTN_TEXT_RESUME :BTN_TEXT_PAUSE);
 
-   Utils::loadBitmap(_hSelf, IDC_ABOUT_BTN, IDB_STAYAWAKE_ABOUT_BITMAP);
+   Utils::loadBitmap(_hSelf, IDC_ABOUT_BTN, IDB_ABOUT_BITMAP);
    Utils::addTooltip(_hSelf, IDC_ABOUT_BTN, L"", ABOUT_DIALOG_TITLE, TRUE);
 
    if (isTimerPaused()) showPausedInfo(TRUE);
