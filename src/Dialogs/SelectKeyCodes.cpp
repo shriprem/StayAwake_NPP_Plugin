@@ -49,7 +49,7 @@ INT_PTR CALLBACK SelectKeyCodes::run_dlgProc(UINT message, WPARAM wParam, LPARAM
 
       case IDC_INPUT_OPTIONS_INFO_BTN:
          ShellExecute(_hSelf, L"open",
-            L"https://github.com/shriprem/StayAwake_NPP_Plugin/blob/Version2.0/InputOptions.md", nullptr, nullptr, SW_SHOW);
+            L"https://github.com/shriprem/StayAwake_NPP_Plugin/blob/main/InputOptions.md", nullptr, nullptr, SW_SHOW);
          break;
 
       case IDOK:

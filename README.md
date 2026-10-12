@@ -8,22 +8,31 @@
 ![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/shriprem/StayAwake_NPP_Plugin/CI_build.yml)
 ![GitHub issues](https://img.shields.io/github/issues/shriprem/StayAwake_NPP_Plugin)
 
-[Current Version: 1.2.0.1](https://github.com/shriprem/StayAwake_NPP_Plugin/blob/main/VersionHistory.md)
+![StayAwake UI](images/StayAwakePanel.png) &nbsp; ![Input Options UI](images/StayAwakeInputOptions.png)
+
+[Current Version: 1.5.0.0](VersionHistory.md)
 
 StayAwake is a simple, lightweight plugin for Notepad++ that enables you to maintain an _Active_ status on Microsoft Teams (and perhaps other messaging applications such as Slack and Zoom). StayAwake also prevents screen saver activation, screen blanking, and Windows session lockouts.
 
+## Features at a glance
+* Randomized simulation with mouse or key inputs. Roster with a choice of 24 no/low side-effect keys and 2 invisible mouse moves.
+* Random interval simulation. Intervals within a specified range of seconds.
+* Helpful status information with timestamps of Last and Next simulations.
+* Autostart with every Notepad++ session.
+* [Stealth Mode](#stealth-mode) option. StayAwake will continue to run even with its panel closed.
+* Manual Pause feature when needed.
+* Automatic Pause while Windows in locked state. Reduces disk activity and CPU usage. Conserves battery power.
+
 If you are using Microsoft Teams, you may have noticed that Teams automatically sets your status to _Away_ after a few minutes of inactivity. This can be frustrating if you are still at your desk but perhaps on a business phone call _OR_ outlining a plan on paper _OR_ consulting some reference material.
 
-StayAwake does its job by simulating key presses of unused or low side-effect buttons at specified time intervals. This is a safe and non-intrusive way to keep your Microsoft Teams status _Active_.
+StayAwake simulates a randomly selected input from a specified roster of jitter-free mouse moves and no/low side-effect keys. Additionally, these simulations are done at random intervals within a specified range of seconds. This is a safe and non-intrusive way to keep your Microsoft Teams status _Active_. The combined randomness of inputs and time intervals eliminates predictable patterns, making StayAwake simulations seem organic.
 
-* StayAwake will continue to run in the background even after its panel is closed.
-* StayAwake will autostart with every Notepad++ session. There is no need to leave the panel open to have StayAwake autostart with Notepad++. For more info on this feature, see: [Stealth Mode](#stealth-mode)
 
 ## Plugin Panel
 ![StayAwake UI](images/StayAwakePanel.png)
 
-#### Select multiple inputs for random simulation
-StayAwake can randomly pick any of the 12 key codes during each simulation. Users can specify _at least_ one OR a select few OR all of the 12 key codes to be included in the simulation roster. See the [Input Simulation Options](https://github.com/shriprem/StayAwake_NPP_Plugin/blob/Version2.0/InputOptions.md) section below for more info.
+#### Select multiple options for random simulation
+StayAwake can randomly pick any of the 26 inputs (24 key codes & 2 mouse moves) during each simulation. Users can specify _at least_ one OR a select few OR all of the 26 inputs to be included in the simulation roster. See [Input Simulation Options](InputOptions.md) for more info.
 
 #### Minimum Awake Seconds
 This field allows you to specify the minimum interval between key simulations. The initial default value for this is 240 seconds (_i.e._, 4 minutes). However, you can change this to any value between 10 and 9990 seconds. Your new value will be saved and used the next time you run StayAwake.
@@ -31,12 +40,16 @@ This field allows you to specify the minimum interval between key simulations. T
 #### Maximum Awake Seconds
 This field allows you to specify the maximum interval between key simulations. The initial default value for this is 240 seconds (_i.e._, 4 minutes). However, you can change this to any value between 10 and 9990 seconds. Your new value will be saved and used the next time you run StayAwake.
 
+**Note**: If the value entered for *Maximum Awake Seconds* is less than the value for *Minimum Awake Seconds*, the *Maximum Awake Seconds* value will be automatically swapped with the *Minimum Awake Seconds* value.
+
+**Tip**: If Microsoft Teams is changing your status to _Away_ after 5 minutes (i.e., 300 seconds) of inactivity, consider setting the *Minimum Awake Seconds* to around 200 and the *Maximum Awake Seconds* to 310 or 320 or even 330 (i.e., a little over 300). This weighted range will cause your Teams status to briefly drift out of _Active_ status once in a while -- a more normal user behavior from your coworkers' perspective than a solid green status through an entire work day.
+
 #### Set Timer button
 After changing the value for either *Minimum Awake Seconds* or *Maximum Awake Seconds*, click this button to apply the new setting. Clicking this button will also immediately invoke an Awake event.
 
 After every Awake event, a random number of seconds (between the specified minimum and maximum seconds) will be picked to run the next Awake event.
 
-The clock times of the last and next Awake events will be displayed and continually refreshed on the StayAwake window. The randomly picked key code used for the last Awake will also be displayed below the last Awake time.
+The clock times of the last and next Awake events will be displayed and continually refreshed on the StayAwake panel. The randomly picked input option used for the last Awake will also be displayed below the last Awake time.
 
 #### Stealth Mode checkbox
 The stealth mode can be turned ON/OFF either with this checkbox or via the Notepad++ menu option: *Plugins » StayAwake » Stealth Mode*. When stealth mode is active, the *Stealth Mode* menu option will have a checkmark indicator. See the [Stealth Mode](#stealth-mode) section below for more info.
@@ -53,6 +66,7 @@ As seen in the clip above, clicking the *Pause* button will also have these effe
 
    ![StayAwake UI](images/StayAwakePausedLaunch.png)
 
+4. On a related note, if the Windows system has been manually locked, StayAwake will pause key and mouse simulations until the system gets unlocked again. This will help reduce disk activity and CPU usage (thus conserving battery power on laptops) while the system is in locked state.
 
 #### Close button
 Click this button to close the plugin panel and continue to run StayAwake in the background.
@@ -91,7 +105,9 @@ Beginning with the v1.1.0.0 release, StayAwake will autostart with every Notepad
 ## Configuration File Details
 StayAwake saves its configuration in a file named `StayAwake.ini`. These key-value pairs are stored in this file:
 
-1. `SelectedKeyCodes`: This key stores a string of 12 characters -- each character indicating if a key code in the [Input Simulation Options](https://github.com/shriprem/StayAwake_NPP_Plugin/blob/Version2.0/InputOptions.md) popup is selected or not with either a `1` or `0`, respectively.
+1. `SelectedKeyCodes`: This key stores a string of 26 characters -- each character indicating if a key code or mouse move in the [Input Simulation Options](InputOptions.md) popup is enabled or not with either a `1` or `0`, respectively.
+
+   If an invalid value is detected for this key, the default value of `00111111111111111111111111` (i.e., enabling of all inputs except *Scroll Lock cycle* and *Volume Down & Up*) will be used instead.
 
 2. `MinimumIntervalInSeconds`: This key stores the minimum number of seconds between each StayAwake Key simulation as specified in the [Minimum Awake Seconds](#minimum-awake-seconds) field.
 
@@ -123,6 +139,10 @@ However, if you are looking for a way to keep your Microsoft Teams status _Activ
 Within Notepad++, you can install the StayAwake plugin using the Notepad++ Plugin Manager (**Plugins » Plugins Admin** menu option => **Available** tab).
 
 After installing the StayAwake plugin, click on **Plugins » StayAwake » Show StayAwake Panel** menu option to start the utility.
+
+If you like StayAwake, please star this repo. Thank you for your appreciation.
+
+If you would like to support its development, you can buy me a coffee by clicking the button below. Thank you for your support!
 
 <a href='https://ko-fi.com/S6S417WICS' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi5.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
