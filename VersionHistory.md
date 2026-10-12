@@ -1,5 +1,23 @@
 ## Version History
 
+### Version 1.5.0.0 [October 12, 2026]
+
+1. Two mouse simulation options (Zero-pixel Mouse Move and One-pixel Mouse Jiggle) have been added to the [Input Simulation Options](InputOptions.md) roster.
+
+2. 12 new simulation options for Extended Function Keys: F13 to F24 have been added to the [Input Simulation Options](InputOptions.md) roster.
+
+3. StayAwake will now simulate events using the `SendInput` API instead of the deprecated `keybd_event` API. `SendInput` API allows batching of multiple key or mouse events in a single atomic call to the Windows OS, thus yielding jitter-free key or mouse simulations.
+
+4. Volume Up & Down simulation will now preserve the muted sound state. Prior to each Volume Up & Down simulation event, StayAwake will detect if the sound is in a muted state or not. If the sound is found muted, Volume Mute key will also be added after the Volume Down & Up keys in the `SendInput` API call.
+
+5. If the Windows system has been manually locked, StayAwake will now suppress key and mouse simulations until the system gets unlocked again. This will help reduce disk activity and CPU usage (thus conserving battery power on laptops) while the system is in locked state.
+
+6. Added "Select Input Simulation options" option in Notepad++ menu: Plugins » StayAwake. This will allow users to select input simulation options without opening the plugin panel, especially while in stealth mode.
+
+**Release:** [1.5.0.0 Release](https://github.com/shriprem/StayAwake_NPP_Plugin/releases/tag/v1.5.0.0)
+
+---
+
 ### Version 1.2.0.1 [September 21, 2026]
 
 1. StayAwake will use a random pick from a roster of user-specified key codes for each Awake event. See enhancement request: [#15](https://github.com/shriprem/StayAwake/issues/15).
